@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metodologia — Margherita Index</title>
+<meta name="description" content="Come raccogliamo e verifichiamo i prezzi della pizza Margherita: fonti pubbliche ufficiali, doppia verifica automatica e umana, correzioni aperte a tutti.">
+<style>
+:root{--bg:#101216;--panel:#191c22;--line:#343943;--text:#f4f0e8;--muted:#9ca3af;--amber:#f4b942}
+[data-theme=light]{--bg:#f4f0e8;--panel:#fffdf8;--line:#d4cbbb;--text:#24211d;--muted:#736b5f;--amber:#a96b00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 Inter,system-ui,sans-serif}
+main{max-width:760px;margin:auto;padding:48px 22px 80px}
+.eyebrow{color:var(--amber);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+h1{font:800 clamp(30px,5vw,46px)/1.05 Georgia,serif;margin:10px 0 26px;letter-spacing:-.02em}
+h2{font-size:20px;margin:38px 0 10px}
+p,li{color:var(--text);opacity:.92}
+li{margin:6px 0}
+code{background:var(--panel);padding:2px 6px;border-radius:4px;font-size:.9em}
+a{color:var(--amber)}
+.box{border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);border-radius:10px;padding:16px 18px;margin:18px 0}
+.small{font-size:13px;color:var(--muted)}
+</style></head>
+<body><main>
+<div class="eyebrow">Margherita Index</div>
+<h1>Come costruiamo l'indice</h1>
+
+<p>L'indice raccoglie <strong>un solo numero per pizzeria</strong>: il prezzo della pizza Margherita — o del suo equivalente diretto ("Classica", "Pomodoro e Mozzarella") — perché è il termometro più onesto per confrontare le città italiane.</p>
+
+<h2>Dove prendiamo i dati</h2>
+<ul>
+<li><strong>Solo menu pubblici ufficiali</strong>: i PDF e le pagine menu pubblicati dalle pizzerie stesse sui loro siti web, oppure le schede ufficiali sulle app di delivery.</li>
+<li>Rispettiamo sempre il file <code>robots.txt</code> dei siti e non contattiamo mai le pizzerie via telefono.</li>
+<li>Niente dati "sentito dire", stime o aggregatori di terze parti.</li>
+</ul>
+
+<h2>Come li verifichiamo</h2>
+<ol>
+<li><strong>Estrazione automatica dal layout</strong> del menu (prezzi letti nella loro colonna, con scarti automatici di codici allergeni, diametri e supplementi).</li>
+<li><strong>Doppio controllo con intelligenza artificiale visiva</strong>: le pagine del menu vengono rilette da un modello indipendente che conferma — o contesta — il prezzo trovato.</li>
+<li><strong>Revisione umana riga per riga</strong>: ogni caso ambiguo viene aperto sul menu originale e deciso da una persona prima della pubblicazione.</li>
+<li>Ogni pizzeria conserva la <strong>tracciabilità completa</strong> di fonte, URL del menu ed evidenza testuale.</li>
+</ol>
+
+<div class="box"><strong>In breve:</strong> nessun prezzo viene pubblicato se non è stato visto sia dalla macchina sia da un essere umano sulla fonte originale.</div>
+
+<h2>Correggere un prezzo</h2>
+<p>I prezzi cambiano spesso: se noti un valore non aggiornato o sbagliato, segnalalo — la correzione entra nel ciclo di verifica come tutte le altre fonti.</p>
+<p class="small">Canale segnalazioni: apertura di una issue su GitHub con nome pizzeria, città, prezzo corretto e link al menu (verrà aggiunto un form dedicato).</p>
+
+<h2>Quando aggiorniamo</h2>
+<p>Ciclo mensile su tutte le città coperte. La data dell'ultimo aggiornamento è visibile in pagina principale.</p>
+
+<h2>Cosa NON facciamo</h2>
+<ul>
+<li>Non stimiamo né interpolamo prezzi assenti: una pizzeria senza menu verificabile non è nell'indice.</li>
+<li>Non usiamo API a pagamento né dati acquistati.</li>
+<li>Non pubblichiamo contatti personali o giudizi sulla qualità delle pizzerie: solo il prezzo della Margherita.</li>
+</ul>
+
+<p class="small" style="margin-top:40px">← <a href="/">Torna all'indice</a></p>
+</main></body></html>

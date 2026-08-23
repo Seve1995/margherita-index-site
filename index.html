@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Margherita Index — Quanto costa la pizza nella tua città?</title>
+<meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 3.771 pizzerie, 100 città, dati reali. Scopri se la tua città è cara o economica.">
+<meta property="og:title" content="🍕 Margherita Index — Quanto costa la pizza nella tua città?">
+<meta property="og:description" content="Il prezzo medio della Margherita in Italia è €7.64. La tua città è sopra o sotto la media?">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+[data-theme="dark"]{
+  --bg:#07070f;--s1:#0f0f1a;--s2:#161625;
+  --text:#f0f0fa;--muted:#6b6b8a;
+  --accent:#ff5c35;--accent2:#ff9500;
+  --green:#00d4aa;--blue:#5b6aff;--red:#ff3b5c;
+  --grad:linear-gradient(135deg,#ff5c35,#ff9500);
+}
+[data-theme="light"]{
+  --bg:#f7f7fb;--s1:#ffffff;--s2:#f0f0f8;
+  --text:#0f0f1a;--muted:#7070a0;
+  --accent:#ff5c35;--accent2:#e68200;--green:#00a882;--blue:#4455ee;--red:#e0002a;
+  --grad:linear-gradient(135deg,#ff5c35,#ff9500);
+  --glass:rgba(0,0,0,.02);--border:rgba(0,0,0,.08);
+  --r:14px;
+}
+:root{
+  --glass:rgba(255,255,255,.03);
+  --border:rgba(255,255,255,.07);
+  --r:14px;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .25s,color .25s}
+/* HERO */
+.hero{position:relative;padding:70px 20px 50px;text-align:center;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,92,53,.15),transparent)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,92,53,.12);border:1px solid rgba(255,92,53,.3);color:var(--accent);padding:6px 14px;border-radius:20px;font-size:.78em;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:22px}
+.hero h1{font-size:clamp(2em,5vw,3.4em);font-weight:900;line-height:1.1;margin-bottom:12px}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--muted);font-size:1.1em;max-width:480px;margin:0 auto 32px}
+.nat-avg{font-size:clamp(3.5em,10vw,6em);font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin:10px 0 4px;animation:pop .6s cubic-bezier(.34,1.56,.64,1) both}
+/* THEME TOGGLE */
+.theme-toggle{position:fixed;top:16px;right:16px;z-index:100;background:var(--s1);border:1px solid var(--border);border-radius:30px;padding:8px 14px;cursor:pointer;font-size:.82em;font-weight:700;font-family:inherit;color:var(--text);display:flex;align-items:center;gap:6px;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.theme-toggle:hover{transform:scale(1.05)}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.nat-label{color:var(--muted);font-size:.85em;margin-bottom:28px}
+.nat-pills{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.pill{background:var(--s1);border:1px solid var(--border);border-radius:30px;padding:8px 18px;font-size:.82em}
+.pill span{color:var(--muted);margin-right:4px}
+/* SEARCH */
+.search-wrap{max-width:520px;margin:0 auto;position:relative;z-index:20}
+.search-wrap input{width:100%;padding:18px 22px;border-radius:16px;background:var(--s1);border:2px solid var(--border);color:var(--text);font-size:1.05em;font-family:inherit;outline:none;transition:.2s}
+.search-wrap input:focus{border-color:var(--accent);background:var(--s2)}
+.search-wrap input::placeholder{color:var(--muted)}
+.sugg{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--s2);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:none;z-index:30;max-height:300px;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.sugg-item{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;transition:.15s}
+.sugg-item:hover{background:var(--border)}
+.sugg-item .city-name{font-weight:600}
+.sugg-item .city-meta{font-size:.82em;color:var(--muted)}
+/* RANKINGS */
+.section{max-width:960px;margin:60px auto;padding:0 20px}
+.section-title{font-size:1.1em;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.rank-grid{grid-template-columns:1fr}}
+.rank-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.rank-card h3{padding:14px 18px;font-size:.85em;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.rank-card h3.cheap{color:var(--green)}
+.rank-card h3.exp{color:var(--red)}
+.rank-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:.15s}
+.rank-row:hover{background:var(--border)}
+.rank-row:last-child{border-bottom:none}
+.rank-num{font-size:.75em;color:var(--muted);min-width:20px;text-align:center;font-weight:700}
+.rank-name{flex:1;font-weight:600;font-size:.92em}
+.rank-price{font-size:.92em;font-weight:700}
+.rank-price.cheap{color:var(--green)}
+.rank-price.exp{color:var(--red)}
+/* CITY VIEW */
+#cityView{display:none;max-width:700px;margin:0 auto;padding:0 20px 60px}
+.city-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+.city-card::before{content:'🍕';position:absolute;right:-10px;top:-10px;font-size:5em;opacity:.06}
+.city-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.city-name-big{font-size:1.7em;font-weight:900}
+.city-price-big{font-size:2.8em;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.city-rank-line{font-size:.88em;color:var(--muted);margin-top:4px}
+.city-stats-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.cstat{text-align:center}
+.cstat .v{font-size:1.2em;font-weight:700}
+.cstat .l{font-size:.72em;color:var(--muted);margin-top:2px}
+.vs-bar{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.vs-label{font-size:.78em;color:var(--muted);margin-bottom:8px}
+.vs-track{background:var(--s2);border-radius:4px;height:6px;position:relative}
+.vs-fill{height:100%;border-radius:4px;background:var(--grad);transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.vs-markers{display:flex;justify-content:space-between;font-size:.72em;color:var(--muted);margin-top:4px}
+/* SHARE */
+.share-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;text-align:center}
+.share-text{font-size:.88em;color:var(--muted);margin-bottom:14px}
+.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:10px;font-size:.88em;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:.15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--grad);color:white}
+.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text)}
+.btn-x{background:#000;border:1px solid #333;color:white}
+/* PIZZA LIST */
+.list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.list-title{font-size:.88em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.pizza-list{display:flex;flex-direction:column;gap:8px}
+.p-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;transition:.15s}
+.p-card:hover{border-color:rgba(255,255,255,.15);transform:translateX(3px)}
+.p-card .pname{font-weight:600;font-size:.93em;flex:1}
+.p-card .paddr{font-size:.76em;color:var(--muted);margin-top:2px}
+.p-card .pmeta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.p-card .pprice{font-size:1.15em;font-weight:800;min-width:60px;text-align:right}
+.p-card .pprice-note{font-size:.68em;color:var(--muted);text-align:right;margin-top:2px}
+.p-card .p-alt{font-size:.68em;color:var(--muted);text-align:right;margin-top:5px;line-height:1.35}
+.p-card .p-alt strong{color:var(--text)}
+.pbadge{display:inline-block;font-size:.68em;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap}
+.pbadge-trancio{background:rgba(255,149,0,.15);color:var(--accent2)}
+.pbadge-teglia{background:rgba(91,106,255,.15);color:var(--blue)}
+.pbadge-gourmet{background:rgba(0,212,170,.12);color:var(--green)}
+.pbadge-nd{background:rgba(255,92,53,.1);color:var(--accent)}
+.plink{display:inline-flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);text-decoration:none;padding:2px 7px;border-radius:5px;border:1px solid var(--border);transition:.15s;white-space:nowrap}
+.plink:hover{color:var(--text);border-color:var(--blue)}
+.p-card.missing{opacity:.4}
+.price-low{color:var(--green)}.price-mid{color:var(--accent2)}.price-high{color:var(--red)}
+/* BACK */
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.88em;cursor:pointer;margin-bottom:20px;background:none;border:none;font-family:inherit;transition:.15s;padding:8px 0}
+.back-btn:hover{color:var(--text)}
+/* HOW */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.how-grid{grid-template-columns:1fr}}
+.how-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:22px}
+.how-card .ico{font-size:1.8em;margin-bottom:10px}
+.how-card h4{font-size:.9em;font-weight:700;margin-bottom:6px}
+.how-card p{font-size:.8em;color:var(--muted);line-height:1.5}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#000;padding:12px 24px;border-radius:30px;font-weight:700;font-size:.88em;transition:.3s;z-index:999;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* FOOTER */
+footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.82em;border-top:1px solid var(--border)}
+footer a{color:var(--blue);text-decoration:none}
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:0 20px}
+#homeContent{transition:opacity .2s}
+[data-theme="light"] .sugg{box-shadow:0 10px 40px rgba(0,0,0,.12)}
+[data-theme="light"] .hero{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,92,53,.08),transparent)}
+[data-theme="light"] .hero-badge{background:rgba(255,92,53,.08);border-color:rgba(255,92,53,.2)}
+[data-theme="light"] .nat-avg{-webkit-text-fill-color:transparent}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+
+<div class="hero">
+  <div class="hero-badge">🍕 Dati reali · Aggiornato 2026</div>
+  <h1>Quanto costa una<br><span>pizza Margherita</span><br>nella tua città?</h1>
+  <div class="nat-avg" id="natAvg">€7.64</div>
+  <div class="nat-label">prezzo medio nazionale · 100 città italiane</div>
+  <div class="nat-pills">
+    <div class="pill"><span>🏙️</span><strong id="nCities">…</strong> città</div>
+    <div class="pill"><span>🍕</span><strong id="nPizz">…</strong> pizzerie</div>
+    <div class="pill"><span>✅</span><strong id="nPrices">…</strong> prezzi raccolti</div>
+    <div class="pill"><span>📊</span><strong id="coverage">…</strong> copertura</div>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="🔍 Cerca la tua città..." autocomplete="off" spellcheck="false">
+    <div class="sugg" id="sugg"></div>
+  </div>
+</div>
+
+<div id="homeContent">
+  <div class="section">
+    <div class="section-title">🏆 Classifica prezzi</div>
+    <div class="rank-grid">
+      <div class="rank-card">
+        <h3 class="cheap">✅ Le più economiche</h3>
+        <div id="cheapList"></div>
+      </div>
+      <div class="rank-card">
+        <h3 class="exp">🔴 Le più care</h3>
+        <div id="expList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">⚙️ Come funziona</div>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="ico">🗺️</div>
+        <h4>Censimento automatico</h4>
+        <p>Ogni pizzeria viene trovata tramite Google Places e le principali piattaforme di delivery.</p>
+      </div>
+      <div class="how-card">
+        <div class="ico">🤖</div>
+        <h4>Raccolta prezzi</h4>
+        <p>Il prezzo della Margherita viene estratto da siti ufficiali, menu digitali e aggregatori.</p>
+      </div>
+      <div class="how-card">
+        <div class="ico">📊</div>
+        <h4>Indice pubblico</h4>
+        <p>I dati sono aperti e verificabili. Ogni prezzo ha una fonte URL tracciabile.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="cityView">
+  <button class="back-btn" onclick="goHome()">← Torna alla home</button>
+  <div class="city-card" id="cityCard"></div>
+  <div class="share-box">
+    <div class="share-text">Condividi il prezzo della tua città</div>
+    <div class="share-btns">
+      <button class="btn btn-primary" onclick="shareNative()">📤 Condividi</button>
+      <button class="btn btn-ghost" onclick="copyLink()">🔗 Copia link</button>
+      <button class="btn btn-x" onclick="shareX()">𝕏 Posta</button>
+    </div>
+  </div>
+  <div class="list-header">
+    <div class="list-title" id="listTitle">Tutte le pizzerie</div>
+  </div>
+  <div class="pizza-list" id="pizzaList"></div>
+</div>
+
+<footer>
+  Margherita Index &copy; 2026 &nbsp;·&nbsp;
+  <a href="https://github.com/Seve1995/margherita-index" target="_blank">GitHub</a>
+  &nbsp;·&nbsp; <a href="metodologia.html">Metodologia</a>
+  &nbsp;·&nbsp; Dati raccolti automaticamente da fonti pubbliche
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let DATA = null, allCities = [], currentCity = null, NAT_AVG = 7.64;
+const $ = id => document.getElementById(id);
+
+fetch('app_data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
+  DATA = d;
+  allCities = Object.keys(DATA).sort();
+  buildStats();
+  buildRankings();
+  const p = new URLSearchParams(location.search).get('city');
+  if(p && DATA[p]) showCity(p);
+}).catch(()=>{
+  $('natAvg').textContent='Errore caricamento';
+});
+
+function buildStats(){
+  // Only real cities (>=10 pizzerias) for meaningful coverage stats
+  const realCities = allCities.filter(c=>DATA[c].t>=10);
+  let totalT=0, totalC=0;
+  realCities.forEach(c=>{totalT+=DATA[c].t||0;totalC+=(DATA[c].cs||DATA[c].c||0);});
+  $('nCities').textContent=allCities.length.toLocaleString('it');
+  $('nPizz').textContent=totalT.toLocaleString('it');
+  $('nPrices').textContent=totalC.toLocaleString('it');
+  $('coverage').textContent=(totalT?Math.round(totalC/totalT*100):0)+'%';
+  // Weighted national avg (standard pizzas only)
+  let sum=0,cnt=0;
+  realCities.forEach(c=>{const d=DATA[c];if(d.avg&&d.cs){sum+=d.avg*d.cs;cnt+=d.cs;}});
+  if(cnt) NAT_AVG=sum/cnt;
+  $('natAvg').textContent='\u20ac'+NAT_AVG.toFixed(2);
+}
+
+function buildRankings(){
+  const cities = allCities.filter(c=>DATA[c].avg && DATA[c].c>=3);
+  const sorted = [...cities].sort((a,b)=>DATA[a].avg-DATA[b].avg);
+  const cheap = sorted.slice(0,8);
+  const exp = sorted.slice(-8).reverse();
+  $('cheapList').innerHTML = cheap.map((c,i)=>`
+    <div class="rank-row" onclick="showCity('${esc(c)}')">
+      <span class="rank-num">${i+1}</span>
+      <span class="rank-name">${c}</span>
+      <span class="rank-price cheap">€${DATA[c].avg.toFixed(2)}</span>
+    </div>`).join('');
+  $('expList').innerHTML = exp.map((c,i)=>`
+    <div class="rank-row" onclick="showCity('${esc(c)}')">
+      <span class="rank-num">${i+1}</span>
+      <span class="rank-name">${c}</span>
+      <span class="rank-price exp">€${DATA[c].avg.toFixed(2)}</span>
+    </div>`).join('');
+}
+
+// Search
+const searchEl=$('search'), suggEl=$('sugg');
+searchEl.addEventListener('input',()=>{
+  const q=searchEl.value.toLowerCase().trim();
+  if(!q||!DATA){suggEl.style.display='none';return;}
+  const m=allCities.filter(c=>c.toLowerCase().includes(q)).slice(0,7);
+  if(!m.length){suggEl.style.display='none';return;}
+  suggEl.innerHTML=m.map(c=>{
+    const d=DATA[c];
+    const avg=d.avg?'€'+d.avg.toFixed(2):'N/D';
+    const cov=d.t?Math.round(d.c/d.t*100)+'%':'';
+    return`<div class="sugg-item" data-city="${esc(c)}"><span class="city-name">${c}</span><span class="city-meta">${avg} · ${cov} copertura</span></div>`;
+  }).join('');
+  suggEl.style.display='block';
+  suggEl.querySelectorAll('.sugg-item').forEach(el=>el.addEventListener('click',()=>showCity(el.dataset.city)));
+});
+document.addEventListener('click',e=>{if(!searchEl.contains(e.target))suggEl.style.display='none';});
+searchEl.addEventListener('keydown',e=>{if(e.key==='Escape')suggEl.style.display='none';});
+
+function showCity(city){
+  if(!DATA||!DATA[city])return;
+  currentCity=city;
+  suggEl.style.display='none';
+  searchEl.value=city;
+  const d=DATA[city];
+  // Rank
+  const ranked=allCities.filter(c=>DATA[c].avg&&(DATA[c].cs||DATA[c].c||0)>=3).sort((a,b)=>DATA[a].avg-DATA[b].avg);
+  const rank=ranked.indexOf(city)+1;
+  const total=ranked.length;
+  const diff=d.avg?d.avg-NAT_AVG:0;
+  const diffStr=d.avg?(diff>=0?'+':'')+'\u20ac'+diff.toFixed(2)+' rispetto alla media (solo pizza intera)':'';
+  const pct=d.avg?Math.min(100,Math.max(5,(d.avg/15)*100)):50;
+  const priceClass=d.avg<=6.5?'price-low':d.avg<=9?'price-mid':'price-high';
+  const rankText=rank?`#${rank} su ${total} città (${rank<=5?'🟢 tra le più economiche':rank>=total-5?'🔴 tra le più care':'🟡 nella media'})`:'';
+  const cs = d.cs || d.c || 0;
+  $('cityCard').innerHTML=`
+    <div class="city-top">
+      <div>
+        <div class="city-name-big">${city}</div>
+        <div class="city-rank-line">${rankText}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="city-price-big ${priceClass}">${d.avg?'\u20ac'+d.avg.toFixed(2):'N/D'}</div>
+        <div style="font-size:.72em;color:var(--muted);margin-top:4px">${diffStr}</div>
+      </div>
+    </div>
+    <div class="city-stats-row">
+      <div class="cstat"><div class="v" style="color:var(--blue)">${d.t||0}</div><div class="l">Pizzerie</div></div>
+      <div class="cstat"><div class="v" style="color:var(--green)">${cs}</div><div class="l">Prezzi standard</div></div>
+      <div class="cstat"><div class="v">${d.t?Math.round(cs/d.t*100)+'%':'\u2014'}</div><div class="l">Copertura</div></div>
+      <div class="cstat"><div class="v" style="color:var(--green)">${d.min?'\u20ac'+d.min.toFixed(2):'\u2014'}</div><div class="l">Min</div></div>
+      <div class="cstat"><div class="v" style="color:var(--red)">${d.max?'\u20ac'+d.max.toFixed(2):'\u2014'}</div><div class="l">Max</div></div>
+    </div>
+    ${d.avg?`<div class="vs-bar">
+      <div class="vs-label">Posizione rispetto alla media nazionale (€${NAT_AVG.toFixed(2)})</div>
+      <div class="vs-track"><div class="vs-fill" style="width:${pct}%"></div></div>
+      <div class="vs-markers"><span>più economica</span><span>più cara</span></div>
+    </div>`:''}`;
+  // Pizza list — standard first, then non-standard, then missing
+  const std=(d.p||[]).filter(p=>p.p&&p.f==='standard').sort((a,b)=>a.p-b.p);
+  const notStd=(d.p||[]).filter(p=>p.p&&p.f!=='standard').sort((a,b)=>a.p-b.p);
+  const nope=(d.p||[]).filter(p=>!p.p);
+  $('listTitle').textContent=`${std.length} prezzi pizza intera · ${notStd.length} trancio/teglia · ${nope.length} senza prezzo`;
+  const renderCard = p => {
+    const isStd = p.f==='standard';
+    const fmtBadge = p.f==='al trancio'  ? '<span class="pbadge pbadge-trancio">Al trancio</span>' :
+                     p.f==='mezza teglia' ? '<span class="pbadge pbadge-teglia">Mezza teglia</span>' :
+                     p.f==='gourmet'      ? '<span class="pbadge pbadge-gourmet">Gourmet</span>' :
+                     (!isStd && p.f)      ? `<span class="pbadge pbadge-nd">${p.f}</span>` : '';;
+    const mapsBtn = p.m?`<a class="plink" href="${p.m}" target="_blank" rel="noopener">📍 Maps</a>`:
+                       `<a class="plink" href="https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener">📍 Maps</a>`;
+    const telBtn = p.ph?`<a class="plink" href="tel:${p.ph}">📞 ${p.ph}</a>`:
+                        (p.pid?`<a class="plink" href="https://maps.google.com/maps?cid=${p.pid}" target="_blank" rel="noopener">ℹ️ Info</a>`:'');
+    const priceNote = isStd?'':`<div class="pprice-note">escluso dalla media</div>`;
+    const alternatives = (p.price_options||[]).filter(o=>
+      !(Number(o.prezzo)===Number(p.p) && (o.formato||'standard')===(p.f||'standard'))
+    );
+    const alternativeHtml = alternatives.length ? `<div class="p-alt">${alternatives.map(o=>
+      `<div>${o.formato||'alternativa'}: <strong>€${Number(o.prezzo).toFixed(2)}</strong></div>`
+    ).join('')}</div>` : '';
+    return `<div class="p-card">
+      <div style="flex:1">
+        <div class="pname">${p.n||''}</div>
+        <div class="paddr">${p.a||''}</div>
+        <div class="pmeta">${fmtBadge}${mapsBtn}${telBtn}</div>
+      </div>
+      <div><span class="pprice ${priceColor(p.p)}">\u20ac${p.p.toFixed(2)}</span>${priceNote}${alternativeHtml}</div>
+    </div>`;
+  };
+  const missingCards = nope.slice(0,5).map(p=>{
+    const mapsBtn=`<a class="plink" href="https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener">📍 Maps</a>`;
+    return `<div class="p-card missing"><div style="flex:1"><div class="pname">${p.n||''}</div><div class="paddr">Prezzo non disponibile</div><div class="pmeta">${mapsBtn}</div></div></div>`;
+  });
+  $('pizzaList').innerHTML=[...std.map(renderCard),...notStd.map(renderCard),...missingCards].join('');
+  $('homeContent').style.display='none';
+  $('cityView').style.display='block';
+  history.pushState(null,'','?city='+encodeURIComponent(city));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goHome(){
+  currentCity=null;
+  $('cityView').style.display='none';
+  $('homeContent').style.display='block';
+  searchEl.value='';
+  history.pushState(null,'','.');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function priceColor(p){return p<=6.5?'price-low':p<=9?'price-mid':'price-high';}
+function esc(s){return s.replace(/"/g,'&quot;').replace(/'/g,"\\'");}
+
+function getShareText(){
+  if(!currentCity||!DATA[currentCity])return'';
+  const d=DATA[currentCity];
+  const avg=d.avg?'€'+d.avg.toFixed(2):'N/D';
+  return`🍕 A ${currentCity} la Margherita media costa ${avg}\nScopri il prezzo nella tua città → margherita-index.it`;
+}
+
+function shareNative(){
+  const text=getShareText();
+  if(navigator.share){navigator.share({title:'Margherita Index',text,url:location.href});}
+  else copyLink();
+}
+function copyLink(){
+  navigator.clipboard.writeText(location.href).then(()=>toast('Link copiato! 🔗'));
+}
+function shareX(){
+  const text=encodeURIComponent(getShareText()+'\n'+location.href);
+  window.open('https://x.com/intent/tweet?text='+text,'_blank');
+}
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+window.addEventListener('popstate',()=>{
+  const p=new URLSearchParams(location.search).get('city');
+  if(p&&DATA&&DATA[p])showCity(p); else goHome();
+});
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  $('themeBtn').textContent=isDark?'🌙 Dark':'☀️ Light';
+  localStorage.setItem('theme',isDark?'light':'dark');
+}
+// Restore saved theme
+(function(){
+  const saved=localStorage.getItem('theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  window.addEventListener('DOMContentLoaded',()=>{
+    const btn=$('themeBtn');
+    if(btn)btn.textContent=saved==='dark'?'🌙 Dark':'☀️ Light';
+  });
+})();
+</script>
+</body>
+</html>
