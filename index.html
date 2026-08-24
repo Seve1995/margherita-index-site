@@ -317,7 +317,7 @@ footer a{color:var(--inchiostro)}
 
     <div class="intesta-blocco"><h2>Come nasce l'indice</h2><span class="etichetta">nessuna stima · solo fatti</span></div>
     <div class="passi">
-      <div class="passo"><div class="num">01</div><h4>Raccolta dalle fonti originali</h4><p>Solo menu pubblici ufficiali: siti delle pizzerie e schede delivery. Rispettiamo robots.txt e non contattiamo mai i locali.</p></div>
+      <div class="passo"><div class="num">01</div><h4>Raccolta dalle fonti originali</h4><p>Prima i menu ufficiali delle pizzerie (siti e PDF). Le pagine pubbliche dei delivery solo dove il loro robots.txt consente l'accesso automatico: niente aggiramenti di blocchi, niente account. Ogni prezzo mostra la sua fonte.</p></div>
       <div class="passo"><div class="num">02</div><h4>Lettura doppia: parser + visione</h4><p>Un estrattore legge i prezzi dalla loro colonna; un modello di visione rilegge le pagine e conferma o contesta ogni valore.</p></div>
       <div class="passo"><div class="num">03</div><h4>Revisione umana e pubblicazione</h4><p>I casi ambigui vengono aperti sul PDF originale e decisi da una persona. Se non c'è un prezzo verificabile, la pizzeria non entra nell'indice.</p></div>
     </div>
@@ -432,14 +432,16 @@ function mostraCitta(citta){
 
   const voce=p=>{
     const maps=p.m?p.m:`https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}`;
+    const FONTE={glovo:'via Glovo',justeat:'via Just Eat',deliveroo:'via Deliveroo',public_search:'ricerca pubblica'};
     const tagFmt=p.f&&p.f!=='standard'?`<span class="tag">${esc(p.f)}</span>`:'';
+    const tagFonte=p.s&&FONTE[p.s]?`<span class="tag">${FONTE[p.s]}</span>`:'';
     const tel=p.ph?`<span class="tag">☎ ${esc(p.ph)}</span>`:(p.pid?`<span class="tag"><a href="https://maps.google.com/maps?cid=${p.pid}" target="_blank" rel="noopener" style="color:inherit">info</a></span>`:'');
     const alt=(p.price_options||[]).filter(o=>!(Number(o.prezzo)===Number(p.p)&&(o.formato||'standard')===(p.f||'standard')));
     return `<div class="voce">
       <div class="sx">
         <div class="n-pizzeria">${esc(p.n||'')}</div>
         <div class="indirizzo">${esc(p.a||'')}</div>
-        <div class="tag-linea">${tagFmt}<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">mappa</a></span>${tel}</div>
+        <div class="tag-linea">${tagFmt}${tagFonte}<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">mappa</a></span>${tel}</div>
       </div>
       <div class="dx">
         <div class="prezzo-scontrino">€${p.p.toFixed(2).replace('.',',')}</div>
