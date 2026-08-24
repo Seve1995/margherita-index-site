@@ -1,61 +1,204 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="dark">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Metodologia — Margherita Index</title>
 <meta name="description" content="Come raccogliamo e verifichiamo i prezzi della pizza Margherita: fonti pubbliche ufficiali, doppia verifica automatica e umana, correzioni aperte a tutti.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#101216;--panel:#191c22;--line:#343943;--text:#f4f0e8;--muted:#9ca3af;--amber:#f4b942}
-[data-theme=light]{--bg:#f4f0e8;--panel:#fffdf8;--line:#d4cbbb;--text:#24211d;--muted:#736b5f;--amber:#a96b00}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 Inter,system-ui,sans-serif}
-main{max-width:760px;margin:auto;padding:48px 22px 80px}
-.eyebrow{color:var(--amber);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-h1{font:800 clamp(30px,5vw,46px)/1.05 Georgia,serif;margin:10px 0 26px;letter-spacing:-.02em}
-h2{font-size:20px;margin:38px 0 10px}
-p,li{color:var(--text);opacity:.92}
-li{margin:6px 0}
-code{background:var(--panel);padding:2px 6px;border-radius:4px;font-size:.9em}
-a{color:var(--amber)}
-.box{border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);border-radius:10px;padding:16px 18px;margin:18px 0}
-.small{font-size:13px;color:var(--muted)}
-</style></head>
-<body><main>
-<div class="eyebrow">Margherita Index</div>
-<h1>Come costruiamo l'indice</h1>
+:root{
+  --carta:#efece4; --carta2:#e7e3d7;
+  --inchiostro:#17181c; --inchiostro2:#43464f;
+  --blu:#24418e; --rosso:#c92f27; --verde:#256b4a; --giallo:#f5d76e;
+  --linea:#c9c4b4;
+}
+[data-tema="scuro"]{
+  --carta:#12151a; --carta2:#191d24;
+  --inchiostro:#eceae2; --inchiostro2:#9aa0ab;
+  --blu:#8ea6ff; --rosso:#ff6f61; --verde:#63bd90; --giallo:#e8c95e;
+  --linea:#2b3038;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-tema]){--carta:#12151a; --carta2:#191d24; --inchiostro:#eceae2; --inchiostro2:#9aa0ab; --blu:#8ea6ff; --rosso:#ff6f61; --verde:#63bd90; --giallo:#e8c95e; --linea:#2b3038;}
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--carta); color:var(--inchiostro);
+  font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  transition:background .25s,color .25s;
+}
+::selection{background:var(--giallo); color:#111}
+:focus-visible{outline:2px solid var(--rosso); outline-offset:2px}
+.etichetta{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--inchiostro2);
+}
 
-<p>L'indice raccoglie <strong>un solo numero per pizzeria</strong>: il prezzo della pizza Margherita — o del suo equivalente diretto ("Classica", "Pomodoro e Mozzarella") — perché è il termometro più onesto per confrontare le città italiane.</p>
+/* barra */
+.barra{
+  position:sticky; top:0; z-index:50; display:flex; justify-content:space-between;
+  align-items:center; padding:12px 20px;
+  background:var(--carta); border-bottom:1px solid var(--linea);
+}
+.marchio{display:flex; align-items:baseline; gap:8px; text-decoration:none; color:inherit}
+.marchio b{font-weight:800; font-size:17px; letter-spacing:-.02em}
+.marchio em{font-family:"Instrument Serif",serif; font-style:italic; font-size:17px; color:var(--rosso)}
+.azioni{display:flex; gap:8px}
+.azioni a,.azioni button{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em;
+  text-decoration:none; color:var(--inchiostro);
+  background:none; border:1px solid var(--linea); border-radius:999px;
+  padding:7px 13px; cursor:pointer; transition:border-color .15s, color .15s;
+}
+.azioni a:hover,.azioni button:hover{border-color:var(--inchiostro)}
 
-<h2>Dove prendiamo i dati</h2>
-<ul>
-<li><strong>Solo menu pubblici ufficiali</strong>: i PDF e le pagine menu pubblicati dalle pizzerie stesse sui loro siti web, oppure le schede ufficiali sulle app di delivery.</li>
-<li>Rispettiamo sempre il file <code>robots.txt</code> dei siti e non contattiamo mai le pizzerie via telefono.</li>
-<li>Niente dati "sentito dire", stime o aggregatori di terze parti.</li>
-</ul>
+/* articolo */
+main{max-width:720px; margin:0 auto; padding:56px 22px 40px}
+.titolo{
+  font-weight:800; letter-spacing:-.03em; line-height:1;
+  font-size:clamp(38px,7vw,64px); margin:14px 0 18px;
+}
+.titolo-serif{font-family:"Instrument Serif",serif; font-style:italic; font-weight:400}
+main > p{font-size:17px; line-height:1.65; margin-bottom:16px}
+h2{
+  font-weight:800; font-size:clamp(20px,2.6vw,26px); letter-spacing:-.02em;
+  border-bottom:1.5px solid var(--inchiostro); padding-bottom:10px; margin:46px 0 18px;
+}
+ul,ol{padding-left:22px; display:flex; flex-direction:column; gap:10px; margin-bottom:16px}
+li{line-height:1.6; font-size:15.5px}
+li::marker{font-family:"IBM Plex Mono",monospace; font-size:.85em; color:var(--rosso)}
+strong{font-weight:700}
+code{
+  font-family:"IBM Plex Mono",monospace; font-size:.88em;
+  background:var(--carta2); padding:2px 6px; border-radius:3px;
+}
 
-<h2>Come li verifichiamo</h2>
-<ol>
-<li><strong>Estrazione automatica dal layout</strong> del menu (prezzi letti nella loro colonna, con scarti automatici di codici allergeni, diametri e supplementi).</li>
-<li><strong>Doppio controllo con intelligenza artificiale visiva</strong>: le pagine del menu vengono rilette da un modello indipendente che conferma — o contesta — il prezzo trovato.</li>
-<li><strong>Revisione umana riga per riga</strong>: ogni caso ambiguo viene aperto sul menu originale e deciso da una persona prima della pubblicazione.</li>
-<li>Ogni pizzeria conserva la <strong>tracciabilità completa</strong> di fonte, URL del menu ed evidenza testuale.</li>
-</ol>
+/* passi numerati: sequenza reale di verifica */
+.passo{
+  display:grid; grid-template-columns:52px 1fr; gap:14px; align-items:start;
+  padding:16px 0; border-bottom:1px solid var(--linea);
+}
+.passi{border-top:1.5px solid var(--inchiostro)}
+.passi li{list-style:none}
+.passi .num{
+  font-family:"IBM Plex Mono",monospace; font-size:26px; font-weight:600;
+  color:var(--rosso); line-height:1;
+}
+.passi h3{font-weight:800; font-size:16px; letter-spacing:-.01em; margin-bottom:3px}
+.passi p{color:var(--inchiostro2); font-size:14.5px; line-height:1.55}
 
-<div class="box"><strong>In breve:</strong> nessun prezzo viene pubblicato se non è stato visto sia dalla macchina sia da un essere umano sulla fonte originale.</div>
+/* richiami */
+.box{
+  border:1.5px solid var(--inchiostro); background:var(--giallo); color:#17181c;
+  padding:18px 20px; margin:22px 0; font-size:15.5px; line-height:1.55;
+}
+.niente{
+  border:1.5px dashed var(--linea); padding:18px 20px; margin:22px 0;
+}
+.niente ul{margin:0}
+.small{font-size:13px; color:var(--inchiostro2)}
 
-<h2>Correggere un prezzo</h2>
-<p>I prezzi cambiano spesso: se noti un valore non aggiornato o sbagliato, segnalalo — la correzione entra nel ciclo di verifica come tutte le altre fonti.</p>
-<p class="small">Canale segnalazioni: apertura di una issue su GitHub con nome pizzeria, città, prezzo corretto e link al menu (verrà aggiunto un form dedicato).</p>
+.segnala-box{
+  border:1.5px solid var(--rosso); padding:22px; margin-top:18px;
+  display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.segnala-box p{margin:0; flex:1; min-width:220px; font-size:15px; line-height:1.5}
+.btn-segnala{
+  font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600; letter-spacing:.04em;
+  padding:12px 20px; cursor:pointer; text-decoration:none; white-space:nowrap;
+  border:1.5px solid var(--rosso); background:var(--rosso); color:#fff;
+  box-shadow:3px 3px 0 var(--inchiostro); transition:transform .12s, box-shadow .12s;
+}
+.btn-segnala:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--inchiostro)}
+.btn-segnala:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--inchiostro)}
 
-<h2>Quando aggiorniamo</h2>
-<p>Ciclo mensile su tutte le città coperte. La data dell'ultimo aggiornamento è visibile in pagina principale.</p>
+footer{
+  max-width:720px; margin:0 auto; padding:28px 22px 50px;
+  border-top:1.5px solid var(--inchiostro);
+  display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--inchiostro2);
+}
+footer a{color:var(--inchiostro)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+</head>
+<body>
 
-<h2>Cosa NON facciamo</h2>
-<ul>
-<li>Non stimiamo né interpolamo prezzi assenti: una pizzeria senza menu verificabile non è nell'indice.</li>
-<li>Non usiamo API a pagamento né dati acquistati.</li>
-<li>Non pubblichiamo contatti personali o giudizi sulla qualità delle pizzerie: solo il prezzo della Margherita.</li>
-</ul>
+<div class="barra">
+  <a class="marchio" href="/">
+    <b>MARGHERITA</b><em>Index</em>
+  </a>
+  <div class="azioni">
+    <a href="/">Indice</a>
+    <button id="temaBtn" onclick="cambiaTema()" aria-label="Cambia tema">☾ / ☀</button>
+  </div>
+</div>
 
-<p class="small" style="margin-top:40px">← <a href="/">Torna all'indice</a></p>
-</main></body></html>
+<main>
+  <span class="etichetta">Trasparenza · nessuna stima · solo fatti</span>
+  <h1 class="titolo">Come nasce <span class="titolo-serif">l'indice</span></h1>
+
+  <p>L'indice raccoglie <strong>un solo numero per pizzeria</strong>: il prezzo della pizza Margherita — o del suo equivalente diretto ("Classica", "Pomodoro e Mozzarella") — perché è il termometro più onesto per confrontare le città italiane.</p>
+
+  <h2>Dove prendiamo i dati</h2>
+  <ul>
+    <li><strong>Solo menu pubblici ufficiali</strong>: i PDF e le pagine menu pubblicati dalle pizzerie stesse sui loro siti web, oppure le schede ufficiali sulle app di delivery.</li>
+    <li>Rispettiamo sempre il file <code>robots.txt</code> dei siti e non contattiamo mai le pizzerie via telefono.</li>
+    <li>Niente dati "sentito dire", stime o aggregatori di terze parti.</li>
+  </ul>
+
+  <h2>Come li verifichiamo</h2>
+  <div class="passi">
+    <div class="passo"><div class="num">01</div><div><h3>Estrazione automatica dal layout</h3><p>I prezzi vengono letti nella loro colonna, con scarti automatici di codici allergeni, diametri e supplementi.</p></div></div>
+    <div class="passo"><div class="num">02</div><div><h3>Doppio controllo con intelligenza artificiale visiva</h3><p>Le pagine del menu vengono rilette da un modello indipendente che conferma — o contesta — il prezzo trovato.</p></div></div>
+    <div class="passo"><div class="num">03</div><div><h3>Revisione umana riga per riga</h3><p>Ogni caso ambiguo viene aperto sul menu originale e deciso da una persona prima della pubblicazione.</p></div></div>
+  </div>
+  <ul style="margin-top:14px"><li>Ogni pizzeria conserva la <strong>tracciabilità completa</strong> di fonte, URL del menu ed evidenza testuale.</li></ul>
+
+  <div class="box"><strong>In breve:</strong> nessun prezzo viene pubblicato se non è stato visto sia dalla macchina sia da un essere umano sulla fonte originale.</div>
+
+  <h2>Correggere un prezzo</h2>
+  <p>I prezzi cambiano spesso: se noti un valore non aggiornato o sbagliato, apri una segnalazione — entra nello stesso ciclo di verifica come tutte le altre fonti.</p>
+  <div class="segnala-box">
+    <p>Pizzeria, città, prezzo corretto e se possibile il link al menu: bastano quattro campi.</p>
+    <a class="btn-segnala" href="https://github.com/Seve1995/margherita-index-site/issues/new?template=segnalazione-prezzo.yml" target="_blank" rel="noopener">Segnala un prezzo →</a>
+  </div>
+
+  <h2>Quando aggiorniamo</h2>
+  <p>Ciclo mensile su tutte le città coperte. La data dell'ultimo aggiornamento è visibile nella pagina principale.</p>
+
+  <h2>Cosa NON facciamo</h2>
+  <div class="niente">
+    <ul>
+      <li>Non stimiamo né interpolamo prezzi assenti: una pizzeria senza menu verificabile non è nell'indice.</li>
+      <li>Non usiamo API a pagamento né dati acquistati.</li>
+      <li>Non pubblichiamo contatti personali o giudizi sulla qualità delle pizzerie: solo il prezzo della Margherita.</li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <span>Margherita Index © 2026 — dati aperti, metodo aperto</span>
+  <span><a href="/">indice</a> · <a href="https://github.com/Seve1995/margherita-index-site" target="_blank" rel="noopener">dati</a> · <a href="https://github.com/Seve1995/margherita-index" target="_blank" rel="noopener">pipeline</a></span>
+</footer>
+
+<script>
+function cambiaTema(){
+  const html=document.documentElement;
+  const attuale=html.getAttribute('data-tema')||
+    (matchMedia('(prefers-color-scheme: dark)').matches?'scuro':'chiaro');
+  const nuovo=attuale==='scuro'?'chiaro':'scuro';
+  html.setAttribute('data-tema',nuovo);
+  localStorage.setItem('tema',nuovo);
+}
+(function(){
+  const salvato=localStorage.getItem('tema')||
+    (matchMedia('(prefers-color-scheme: dark)').matches?'scuro':'chiaro');
+  document.documentElement.setAttribute('data-tema',salvato);
+})();
+</script>
+</body>
+</html>

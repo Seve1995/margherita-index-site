@@ -1,0 +1,42 @@
+name: Segnala un prezzo
+description: Prezzo della Margherita sbagliato, mancante o cambiato
+title: "[Prezzo] "
+labels: ["segnalazione"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie! La segnalazione entra nello stesso ciclo di verifica di tutti i dati:
+        controllo sul menu originale e revisione prima della pubblicazione.
+  - type: input
+    id: citta
+    attributes:
+      label: Città
+      placeholder: Es. Milano
+    validations:
+      required: true
+  - type: input
+    id: pizzeria
+    attributes:
+      label: Pizzeria
+      placeholder: Nome esatto come appare nell'indice
+    validations:
+      required: true
+  - type: input
+    id: prezzo
+    attributes:
+      label: Prezzo Margherita (€)
+      placeholder: Es. 7,50
+      description: Prezzo della pizza intera, se disponibile anche il trancio indicarlo nelle note.
+    validations:
+      required: true
+  - type: input
+    id: menu
+    attributes:
+      label: Link al menu (opzionale ma utile)
+      placeholder: https://…
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Formato (trancio/teglia), dimensioni, data in cui hai visto il prezzo…

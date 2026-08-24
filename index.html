@@ -1,444 +1,541 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="dark">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Margherita Index — Quanto costa la pizza nella tua città?</title>
-<meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 3.771 pizzerie, 100 città, dati reali. Scopri se la tua città è cara o economica.">
-<meta property="og:title" content="🍕 Margherita Index — Quanto costa la pizza nella tua città?">
+<meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 3.771 pizzerie, 100 città, dati reali verificati. Scopri se la tua città è cara o economica.">
+<meta property="og:title" content="Margherita Index — Quanto costa la pizza nella tua città?">
 <meta property="og:description" content="Il prezzo medio della Margherita in Italia è €7.64. La tua città è sopra o sotto la media?">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-[data-theme="dark"]{
-  --bg:#07070f;--s1:#0f0f1a;--s2:#161625;
-  --text:#f0f0fa;--muted:#6b6b8a;
-  --accent:#ff5c35;--accent2:#ff9500;
-  --green:#00d4aa;--blue:#5b6aff;--red:#ff3b5c;
-  --grad:linear-gradient(135deg,#ff5c35,#ff9500);
-}
-[data-theme="light"]{
-  --bg:#f7f7fb;--s1:#ffffff;--s2:#f0f0f8;
-  --text:#0f0f1a;--muted:#7070a0;
-  --accent:#ff5c35;--accent2:#e68200;--green:#00a882;--blue:#4455ee;--red:#e0002a;
-  --grad:linear-gradient(135deg,#ff5c35,#ff9500);
-  --glass:rgba(0,0,0,.02);--border:rgba(0,0,0,.08);
-  --r:14px;
-}
+/* ── token ─────────────────────────────────────────── */
 :root{
-  --glass:rgba(255,255,255,.03);
-  --border:rgba(255,255,255,.07);
-  --r:14px;
+  --carta:#efece4; --carta2:#e7e3d7;
+  --inchiostro:#17181c; --inchiostro2:#43464f;
+  --blu:#24418e; --rosso:#c92f27; --verde:#256b4a; --giallo:#f5d76e;
+  --linea:#c9c4b4; --ombra:rgba(20,22,28,.10);
 }
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .25s,color .25s}
-/* HERO */
-.hero{position:relative;padding:70px 20px 50px;text-align:center;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,92,53,.15),transparent)}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,92,53,.12);border:1px solid rgba(255,92,53,.3);color:var(--accent);padding:6px 14px;border-radius:20px;font-size:.78em;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:22px}
-.hero h1{font-size:clamp(2em,5vw,3.4em);font-weight:900;line-height:1.1;margin-bottom:12px}
-.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:var(--muted);font-size:1.1em;max-width:480px;margin:0 auto 32px}
-.nat-avg{font-size:clamp(3.5em,10vw,6em);font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin:10px 0 4px;animation:pop .6s cubic-bezier(.34,1.56,.64,1) both}
-/* THEME TOGGLE */
-.theme-toggle{position:fixed;top:16px;right:16px;z-index:100;background:var(--s1);border:1px solid var(--border);border-radius:30px;padding:8px 14px;cursor:pointer;font-size:.82em;font-weight:700;font-family:inherit;color:var(--text);display:flex;align-items:center;gap:6px;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.15)}
-.theme-toggle:hover{transform:scale(1.05)}
-@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-.nat-label{color:var(--muted);font-size:.85em;margin-bottom:28px}
-.nat-pills{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
-.pill{background:var(--s1);border:1px solid var(--border);border-radius:30px;padding:8px 18px;font-size:.82em}
-.pill span{color:var(--muted);margin-right:4px}
-/* SEARCH */
-.search-wrap{max-width:520px;margin:0 auto;position:relative;z-index:20}
-.search-wrap input{width:100%;padding:18px 22px;border-radius:16px;background:var(--s1);border:2px solid var(--border);color:var(--text);font-size:1.05em;font-family:inherit;outline:none;transition:.2s}
-.search-wrap input:focus{border-color:var(--accent);background:var(--s2)}
-.search-wrap input::placeholder{color:var(--muted)}
-.sugg{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--s2);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:none;z-index:30;max-height:300px;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.sugg-item{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;transition:.15s}
-.sugg-item:hover{background:var(--border)}
-.sugg-item .city-name{font-weight:600}
-.sugg-item .city-meta{font-size:.82em;color:var(--muted)}
-/* RANKINGS */
-.section{max-width:960px;margin:60px auto;padding:0 20px}
-.section-title{font-size:1.1em;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:640px){.rank-grid{grid-template-columns:1fr}}
-.rank-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.rank-card h3{padding:14px 18px;font-size:.85em;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.rank-card h3.cheap{color:var(--green)}
-.rank-card h3.exp{color:var(--red)}
-.rank-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:.15s}
-.rank-row:hover{background:var(--border)}
-.rank-row:last-child{border-bottom:none}
-.rank-num{font-size:.75em;color:var(--muted);min-width:20px;text-align:center;font-weight:700}
-.rank-name{flex:1;font-weight:600;font-size:.92em}
-.rank-price{font-size:.92em;font-weight:700}
-.rank-price.cheap{color:var(--green)}
-.rank-price.exp{color:var(--red)}
-/* CITY VIEW */
-#cityView{display:none;max-width:700px;margin:0 auto;padding:0 20px 60px}
-.city-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
-.city-card::before{content:'🍕';position:absolute;right:-10px;top:-10px;font-size:5em;opacity:.06}
-.city-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.city-name-big{font-size:1.7em;font-weight:900}
-.city-price-big{font-size:2.8em;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
-.city-rank-line{font-size:.88em;color:var(--muted);margin-top:4px}
-.city-stats-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
-.cstat{text-align:center}
-.cstat .v{font-size:1.2em;font-weight:700}
-.cstat .l{font-size:.72em;color:var(--muted);margin-top:2px}
-.vs-bar{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
-.vs-label{font-size:.78em;color:var(--muted);margin-bottom:8px}
-.vs-track{background:var(--s2);border-radius:4px;height:6px;position:relative}
-.vs-fill{height:100%;border-radius:4px;background:var(--grad);transition:width .8s cubic-bezier(.34,1.56,.64,1)}
-.vs-markers{display:flex;justify-content:space-between;font-size:.72em;color:var(--muted);margin-top:4px}
-/* SHARE */
-.share-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;text-align:center}
-.share-text{font-size:.88em;color:var(--muted);margin-bottom:14px}
-.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:10px;font-size:.88em;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:.15s}
-.btn:hover{transform:translateY(-2px)}
-.btn-primary{background:var(--grad);color:white}
-.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text)}
-.btn-x{background:#000;border:1px solid #333;color:white}
-/* PIZZA LIST */
-.list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.list-title{font-size:.88em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.pizza-list{display:flex;flex-direction:column;gap:8px}
-.p-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;transition:.15s}
-.p-card:hover{border-color:rgba(255,255,255,.15);transform:translateX(3px)}
-.p-card .pname{font-weight:600;font-size:.93em;flex:1}
-.p-card .paddr{font-size:.76em;color:var(--muted);margin-top:2px}
-.p-card .pmeta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
-.p-card .pprice{font-size:1.15em;font-weight:800;min-width:60px;text-align:right}
-.p-card .pprice-note{font-size:.68em;color:var(--muted);text-align:right;margin-top:2px}
-.p-card .p-alt{font-size:.68em;color:var(--muted);text-align:right;margin-top:5px;line-height:1.35}
-.p-card .p-alt strong{color:var(--text)}
-.pbadge{display:inline-block;font-size:.68em;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap}
-.pbadge-trancio{background:rgba(255,149,0,.15);color:var(--accent2)}
-.pbadge-teglia{background:rgba(91,106,255,.15);color:var(--blue)}
-.pbadge-gourmet{background:rgba(0,212,170,.12);color:var(--green)}
-.pbadge-nd{background:rgba(255,92,53,.1);color:var(--accent)}
-.plink{display:inline-flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);text-decoration:none;padding:2px 7px;border-radius:5px;border:1px solid var(--border);transition:.15s;white-space:nowrap}
-.plink:hover{color:var(--text);border-color:var(--blue)}
-.p-card.missing{opacity:.4}
-.price-low{color:var(--green)}.price-mid{color:var(--accent2)}.price-high{color:var(--red)}
-/* BACK */
-.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.88em;cursor:pointer;margin-bottom:20px;background:none;border:none;font-family:inherit;transition:.15s;padding:8px 0}
-.back-btn:hover{color:var(--text)}
-/* HOW */
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:640px){.how-grid{grid-template-columns:1fr}}
-.how-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:22px}
-.how-card .ico{font-size:1.8em;margin-bottom:10px}
-.how-card h4{font-size:.9em;font-weight:700;margin-bottom:6px}
-.how-card p{font-size:.8em;color:var(--muted);line-height:1.5}
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#000;padding:12px 24px;border-radius:30px;font-weight:700;font-size:.88em;transition:.3s;z-index:999;pointer-events:none}
-.toast.show{transform:translateX(-50%) translateY(0)}
-/* FOOTER */
-footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.82em;border-top:1px solid var(--border)}
-footer a{color:var(--blue);text-decoration:none}
-/* DIVIDER */
-.divider{height:1px;background:var(--border);margin:0 20px}
-#homeContent{transition:opacity .2s}
-[data-theme="light"] .sugg{box-shadow:0 10px 40px rgba(0,0,0,.12)}
-[data-theme="light"] .hero{background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,92,53,.08),transparent)}
-[data-theme="light"] .hero-badge{background:rgba(255,92,53,.08);border-color:rgba(255,92,53,.2)}
-[data-theme="light"] .nat-avg{-webkit-text-fill-color:transparent}
+@media (prefers-color-scheme: dark){
+  :root{
+    --carta:#12151a; --carta2:#191d24;
+    --inchiostro:#eceae2; --inchiostro2:#9aa0ab;
+    --blu:#8ea6ff; --rosso:#ff6f61; --verde:#63bd90; --giallo:#e8c95e;
+    --linea:#2b3038; --ombra:rgba(0,0,0,.45);
+  }
+}
+[data-tema="chiaro"]{
+  --carta:#efece4; --carta2:#e7e3d7;
+  --inchiostro:#17181c; --inchiostro2:#43464f;
+  --blu:#24418e; --rosso:#c92f27; --verde:#256b4a; --giallo:#f5d76e;
+  --linea:#c9c4b4; --ombra:rgba(20,22,28,.10);
+}
+[data-tema="scuro"]{
+  --carta:#12151a; --carta2:#191d24;
+  --inchiostro:#eceae2; --inchiostro2:#9aa0ab;
+  --blu:#8ea6ff; --rosso:#ff6f61; --verde:#63bd90; --giallo:#e8c95e;
+  --linea:#2b3038; --ombra:rgba(0,0,0,.45);
+}
+/* ── base ──────────────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--carta); color:var(--inchiostro);
+  font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  min-height:100vh; overflow-x:hidden;
+  transition:background .25s,color .25s;
+}
+::selection{background:var(--giallo); color:#111}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--rosso); outline-offset:2px; border-radius:2px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.etichetta{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--inchiostro2);
+}
+
+/* ── barra superiore ───────────────────────────────── */
+.barra{
+  position:sticky; top:0; z-index:50; display:flex; justify-content:space-between;
+  align-items:center; padding:12px 20px;
+  background:var(--carta); border-bottom:1px solid var(--linea);
+}
+.marchio{display:flex; align-items:baseline; gap:8px; text-decoration:none; color:inherit}
+.marchio b{font-weight:800; font-size:17px; letter-spacing:-.02em}
+.marchio em{font-family:"Instrument Serif",serif; font-style:italic; font-size:17px; color:var(--rosso)}
+.azioni{display:flex; gap:8px}
+.azioni a,.azioni button{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em;
+  text-decoration:none; color:var(--inchiostro);
+  background:none; border:1px solid var(--linea); border-radius:999px;
+  padding:7px 13px; cursor:pointer; transition:border-color .15s, color .15s;
+}
+.azioni a:hover,.azioni button:hover{border-color:var(--inchiostro)}
+.azioni .cta{background:var(--rosso); border-color:var(--rosso); color:#fff; font-weight:600}
+.azioni .cta:hover{filter:brightness(1.08)}
+
+/* ── hero: l'indice ────────────────────────────────── */
+.indice{max-width:1060px; margin:0 auto; padding:64px 22px 40px; position:relative}
+.indice .etichetta{display:block; margin-bottom:14px}
+.cifra{
+  font-weight:800; letter-spacing:-.04em; line-height:.94;
+  font-size:clamp(72px,16vw,190px); color:var(--inchiostro);
+}
+.cifra sup{font-size:.32em; vertical-align:super; letter-spacing:0; margin-right:.06em}
+.cifra .variazione{
+  display:block; font-family:"IBM Plex Mono",monospace; font-weight:500;
+  font-size:clamp(13px,1.6vw,17px); letter-spacing:0; color:var(--inchiostro2);
+  margin-top:18px; line-height:1.5;
+}
+.sottolinea{position:relative; display:inline-block}
+.sottolinea::after{
+  content:""; position:absolute; left:-2%; right:-2%; bottom:.02em; height:.14em;
+  background:var(--rosso); z-index:-1; transform:rotate(-.6deg);
+}
+.titolo-serif{
+  font-family:"Instrument Serif",serif; font-style:italic; font-weight:400;
+  letter-spacing:0;
+}
+
+/* ricerca */
+.cerca{max-width:520px; margin:44px 0 0; position:relative; z-index:20}
+.cerca input{
+  width:100%; padding:16px 18px; font:500 17px "Bricolage Grotesque",sans-serif;
+  background:var(--carta2); color:var(--inchiostro);
+  border:1.5px solid var(--linea); border-radius:0;
+  outline:none; transition:border-color .15s;
+}
+.cerca input::placeholder{color:var(--inchiostro2)}
+.cerca input:focus{border-color:var(--inchiostro)}
+.suggerimenti{
+  position:absolute; inset-inline:0; top:calc(100% + 4px); display:none;
+  background:var(--carta); border:1.5px solid var(--inchiostro);
+  max-height:320px; overflow-y:auto; box-shadow:6px 6px 0 var(--ombra);
+}
+.suggerimento{
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  padding:12px 16px; cursor:pointer; border-bottom:1px solid var(--linea);
+}
+.suggerimento:last-child{border-bottom:none}
+.suggerimento:hover,.suggerimento.attivo{background:var(--giallo)}
+.suggerimento .nome{font-weight:700}
+.suggerimento .meta{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--inchiostro2)}
+
+/* statistiche nazionali */
+.nazionale{
+  display:flex; flex-wrap:wrap; gap:26px 40px; margin-top:52px; padding-top:22px;
+  border-top:1.5px solid var(--inchiostro);
+}
+.stat .v{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:22px}
+.stat .l{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--inchiostro2); margin-top:3px}
+
+/* ── classifiche ───────────────────────────────────── */
+.blocchi{max-width:1060px; margin:0 auto; padding:30px 22px 60px}
+.intesta-blocco{
+  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+  border-bottom:1.5px solid var(--inchiostro); padding-bottom:10px; margin:46px 0 20px;
+}
+.intesta-blocco h2{font-weight:800; font-size:clamp(21px,2.6vw,28px); letter-spacing:-.02em}
+.griglia-classifica{display:grid; grid-template-columns:1fr 1fr; gap:26px}
+@media(max-width:720px){.griglia-classifica{grid-template-columns:1fr}}
+.classifica{border:1.5px solid var(--inchiostro); background:var(--carta)}
+.classifica h3{
+  font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; padding:11px 16px; border-bottom:1.5px solid var(--inchiostro);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.classifica h3 .pallino{width:9px; height:9px; border-radius:50%; display:inline-block}
+.classifica.economiche h3 .pallino{background:var(--verde)}
+.classifica.care h3 .pallino{background:var(--rosso)}
+.riga-citta{
+  display:flex; align-items:center; gap:12px; padding:11px 16px; cursor:pointer;
+  border-bottom:1px solid var(--linea); transition:background .12s;
+}
+.riga-citta:last-child{border-bottom:none}
+.riga-citta:hover{background:var(--giallo)}
+.pos{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--inchiostro2); min-width:24px}
+.nome-citta{flex:1; font-weight:700; font-size:15px; letter-spacing:-.01em}
+.prezzo-citta{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px}
+.prezzo-basso{color:var(--verde)} .prezzo-alto{color:var(--rosso)}
+
+/* ── come funziona ─────────────────────────────────── */
+.passi{display:flex; flex-direction:column}
+.passo{
+  display:grid; grid-template-columns:52px 210px 1fr; gap:18px; align-items:start;
+  padding:18px 0; border-bottom:1px solid var(--linea);
+}
+.passo:last-child{border-bottom:none}
+.passo .num{
+  font-family:"IBM Plex Mono",monospace; font-size:26px; font-weight:600;
+  color:var(--rosso); line-height:1;
+}
+.passo h4{font-weight:800; font-size:16px; letter-spacing:-.01em}
+.passo p{font-size:14.5px; color:var(--inchiostro2); line-height:1.55}
+@media(max-width:720px){.passo{grid-template-columns:40px 1fr} .passo p{grid-column:2}}
+
+/* ── vista città: LO SCONTRINO ─────────────────────── */
+#vistaCitta{display:none; max-width:640px; margin:26px auto 70px; padding:0 16px}
+.torna{
+  display:inline-flex; align-items:center; gap:6px; margin:18px 0 14px;
+  background:none; border:none; cursor:pointer; color:var(--inchiostro2);
+  font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.08em;
+}
+.torna:hover{color:var(--inchiostro)}
+
+.scontrino{
+  background:#fbfaf6; color:#1c1d21;
+  filter:drop-shadow(0 14px 26px rgba(0,0,0,.28));
+  clip-path:polygon(0 10px,2% 4px,4% 10px,6% 4px,8% 10px,10% 4px,12% 10px,14% 4px,16% 10px,18% 4px,20% 10px,22% 4px,24% 10px,26% 4px,28% 10px,30% 4px,32% 10px,34% 4px,36% 10px,38% 4px,40% 10px,42% 4px,44% 10px,46% 4px,48% 10px,50% 4px,52% 10px,54% 4px,56% 10px,58% 4px,60% 10px,62% 4px,64% 10px,66% 4px,68% 10px,70% 4px,72% 10px,74% 4px,76% 10px,78% 4px,80% 10px,82% 4px,84% 10px,86% 4px,88% 10px,90% 4px,92% 10px,94% 4px,96% 10px,98% 4px,100% 10px,
+                   100% calc(100% - 10px),98% calc(100% - 4px),96% calc(100% - 10px),94% calc(100% - 4px),92% calc(100% - 10px),90% calc(100% - 4px),88% calc(100% - 10px),86% calc(100% - 4px),84% calc(100% - 10px),82% calc(100% - 4px),80% calc(100% - 10px),78% calc(100% - 4px),76% calc(100% - 10px),74% calc(100% - 4px),72% calc(100% - 10px),70% calc(100% - 4px),68% calc(100% - 10px),66% calc(100% - 4px),64% calc(100% - 10px),62% calc(100% - 4px),60% calc(100% - 10px),58% calc(100% - 4px),56% calc(100% - 10px),54% calc(100% - 4px),52% calc(100% - 10px),50% calc(100% - 4px),48% calc(100% - 10px),46% calc(100% - 4px),44% calc(100% - 10px),42% calc(100% - 4px),40% calc(100% - 10px),38% calc(100% - 4px),36% calc(100% - 10px),34% calc(100% - 4px),32% calc(100% - 10px),30% calc(100% - 4px),28% calc(100% - 10px),26% calc(100% - 4px),24% calc(100% - 10px),22% calc(100% - 4px),20% calc(100% - 10px),18% calc(100% - 4px),16% calc(100% - 10px),14% calc(100% - 4px),12% calc(100% - 10px),10% calc(100% - 4px),8% calc(100% - 10px),6% calc(100% - 4px),4% calc(100% - 10px),2% calc(100% - 4px),0 calc(100% - 10px));
+  padding:34px 26px 40px;
+  font-family:"IBM Plex Mono",monospace; font-size:13px; line-height:1.55;
+}
+.scontrino .intesta{text-align:center; border-bottom:1px dashed #999; padding-bottom:14px; margin-bottom:14px}
+.scontrino .intesta .titolo{font-weight:600; font-size:15px; letter-spacing:.04em}
+.scontrino .intesta .sub{font-size:11px; color:#666; margin-top:4px}
+.scontrino .riga-totale{
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  margin:6px 0 14px; padding:10px 0; border-top:1px dashed #999; border-bottom:2px solid #1c1d21;
+}
+.scontrino .tot-label{font-size:12px; text-transform:uppercase; letter-spacing:.1em}
+.scontrino .tot-valore{font-size:34px; font-weight:600; letter-spacing:-.02em}
+.scontrino .pos-linea{font-size:11.5px; color:#555; margin-bottom:14px}
+.scontrino .mini-stats{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:11px; color:#444; margin-bottom:14px}
+.timbro{
+  float:right; width:104px; height:104px; border:2.5px solid var(--rosso); border-radius:50%;
+  display:flex; align-items:center; justify-content:text-center; text-align:center;
+  color:var(--rosso); font-weight:600; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+  transform:rotate(9deg); padding:10px; line-height:1.35; opacity:.85;
+  margin:-6px -4px 6px 10px;
+}
+/* voci scontrino = pizzerie */
+.voce{padding:7px 0; border-bottom:1px dotted #bbb; display:flex; gap:10px; justify-content:space-between; align-items:flex-start}
+.voce .sx{flex:1; min-width:0}
+.voce .n-pizzeria{font-weight:600; word-break:break-word}
+.voce .indirizzo{font-size:10.5px; color:#666; margin-top:1px; word-break:break-word}
+.voce .tag-linea{margin-top:3px; display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.voce .tag{font-size:9.5px; border:1px solid #999; padding:0 5px; border-radius:3px; color:#444}
+.voce .dx{text-align:right}
+.voce .prezzo-scontrino{font-weight:600; font-size:15px}
+.voce .nota-prezzo{font-size:9.5px; color:#888}
+.voce.alt .prezzo-alternativa{font-size:10.5px; color:#555; text-align:right}
+.voce.muta{opacity:.45}
+.voce.muta .prezzo-scontrino{visibility:hidden}
+.codice-barre{
+  height:44px; margin-top:18px;
+  background:repeating-linear-gradient(90deg,#1c1d21 0 2px,transparent 2px 4px,#1c1d21 4px 5px,transparent 5px 9px,#1c1d21 9px 12px,transparent 12px 14px);
+}
+.codice-testo{text-align:center; font-size:10px; letter-spacing:.35em; color:#333; margin-top:6px}
+.segnala-riga{
+  margin-top:16px; padding-top:12px; border-top:1px dashed #999;
+  display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:11px; color:#555;
+}
+.segnala-riga a{color:#1c1d21; font-weight:600; text-decoration:underline; text-underline-offset:2px}
+
+/* condivisione sotto lo scontrino */
+.condividi{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:26px 0 8px}
+.btn-condividi{
+  font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:500;
+  padding:11px 18px; cursor:pointer; border-radius:0; transition:transform .12s, box-shadow .12s;
+  border:1.5px solid var(--inchiostro); background:var(--carta); color:var(--inchiostro);
+  box-shadow:3px 3px 0 var(--inchiostro);
+}
+.btn-condivisi:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--inchiostro)}
+.btn-condividi:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--inchiostro)}
+.btn-condividi.primario{background:var(--rosso); border-color:var(--rosso); color:#fff; box-shadow:3px 3px 0 var(--inchiostro)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+
+/* toast */
+.toast{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px);
+  background:var(--inchiostro); color:var(--carta);
+  font-family:"IBM Plex Mono",monospace; font-size:13px;
+  padding:12px 22px; transition:.3s; z-index:999; pointer-events:none;
+}
+.toast.visibile{transform:translateX(-50%) translateY(0)}
+
+footer{
+  max-width:1060px; margin:0 auto; padding:34px 22px 50px;
+  border-top:1.5px solid var(--inchiostro);
+  display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--inchiostro2);
+}
+footer a{color:var(--inchiostro)}
 </style>
 </head>
 <body>
 
-<button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
-
-<div class="hero">
-  <div class="hero-badge">🍕 Dati reali · Aggiornato 2026</div>
-  <h1>Quanto costa una<br><span>pizza Margherita</span><br>nella tua città?</h1>
-  <div class="nat-avg" id="natAvg">€7.64</div>
-  <div class="nat-label">prezzo medio nazionale · 100 città italiane</div>
-  <div class="nat-pills">
-    <div class="pill"><span>🏙️</span><strong id="nCities">…</strong> città</div>
-    <div class="pill"><span>🍕</span><strong id="nPizz">…</strong> pizzerie</div>
-    <div class="pill"><span>✅</span><strong id="nPrices">…</strong> prezzi raccolti</div>
-    <div class="pill"><span>📊</span><strong id="coverage">…</strong> copertura</div>
-  </div>
-  <div class="search-wrap">
-    <input type="text" id="search" placeholder="🔍 Cerca la tua città..." autocomplete="off" spellcheck="false">
-    <div class="sugg" id="sugg"></div>
+<div class="barra">
+  <a class="marchio" href="/" onclick="vaiHome(event)">
+    <b>MARGHERITA</b><em>Index</em>
+  </a>
+  <div class="azioni">
+    <a href="metodologia.html">Metodologia</a>
+    <button id="temaBtn" onclick="cambiaTema()" aria-label="Cambia tema">☾ / ☀</button>
   </div>
 </div>
 
-<div id="homeContent">
-  <div class="section">
-    <div class="section-title">🏆 Classifica prezzi</div>
-    <div class="rank-grid">
-      <div class="rank-card">
-        <h3 class="cheap">✅ Le più economiche</h3>
-        <div id="cheapList"></div>
-      </div>
-      <div class="rank-card">
-        <h3 class="exp">🔴 Le più care</h3>
-        <div id="expList"></div>
-      </div>
-    </div>
+<section class="indice">
+  <span class="etichetta">Indice nazionale · aggiornamento mensile · solo menu verificati</span>
+  <h1 class="cifra"><sup>€</sup><span id="mediaNazionale">7.64</span></h1>
+  <p class="variazione">
+    Costa così, in media, una pizza <span class="titolo-serif sottolinea">Margherita</span> intera<br>
+    nelle <strong id="nCitta">…</strong> capoluoghi di provincia italiani.
+    <span id="coperturaLinea"></span>
+  </p>
+
+  <div class="cerca">
+    <input type="text" id="cerca" placeholder="Trova la tua città…" autocomplete="off" spellcheck="false" aria-label="Cerca città">
+    <div class="suggerimenti" id="suggerimenti"></div>
   </div>
 
-  <div class="divider"></div>
+  <div class="nazionale">
+    <div class="stat"><div class="v" id="nPizzerie">…</div><div class="l">pizzerie censite</div></div>
+    <div class="stat"><div class="v" id="nPrezzi">…</div><div class="l">prezzi verificati</div></div>
+    <div class="stat"><div class="v" id="nCopertura">…</div><div class="l">copertura</div></div>
+    <div class="stat"><div class="v"><a href="metodologia.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px">come ↗</a></div><div class="l">metodo</div></div>
+  </div>
+</section>
 
-  <div class="section">
-    <div class="section-title">⚙️ Come funziona</div>
-    <div class="how-grid">
-      <div class="how-card">
-        <div class="ico">🗺️</div>
-        <h4>Censimento automatico</h4>
-        <p>Ogni pizzeria viene trovata tramite Google Places e le principali piattaforme di delivery.</p>
+<div id="contenutoHome">
+  <div class="blocchi">
+    <div class="intesta-blocco"><h2>Classifica capoluoghi</h2><span class="etichetta">Margherita intera · media città</span></div>
+    <div class="griglia-classifica">
+      <div class="classifica economiche">
+        <h3><span>Più economiche</span><span class="pallino" aria-hidden="true"></span></h3>
+        <div id="listaEconomiche"></div>
       </div>
-      <div class="how-card">
-        <div class="ico">🤖</div>
-        <h4>Raccolta prezzi</h4>
-        <p>Il prezzo della Margherita viene estratto da siti ufficiali, menu digitali e aggregatori.</p>
-      </div>
-      <div class="how-card">
-        <div class="ico">📊</div>
-        <h4>Indice pubblico</h4>
-        <p>I dati sono aperti e verificabili. Ogni prezzo ha una fonte URL tracciabile.</p>
+      <div class="classifica care">
+        <h3><span>Più care</span><span class="pallino" aria-hidden="true"></span></h3>
+        <div id="listaCare"></div>
       </div>
     </div>
+
+    <div class="intesta-blocco"><h2>Come nasce l'indice</h2><span class="etichetta">nessuna stima · solo fatti</span></div>
+    <div class="passi">
+      <div class="passo"><div class="num">01</div><h4>Raccolta dalle fonti originali</h4><p>Solo menu pubblici ufficiali: siti delle pizzerie e schede delivery. Rispettiamo robots.txt e non contattiamo mai i locali.</p></div>
+      <div class="passo"><div class="num">02</div><h4>Lettura doppia: parser + visione</h4><p>Un estrattore legge i prezzi dalla loro colonna; un modello di visione rilegge le pagine e conferma o contesta ogni valore.</p></div>
+      <div class="passo"><div class="num">03</div><h4>Revisione umana e pubblicazione</h4><p>I casi ambigui vengono aperti sul PDF originale e decisi da una persona. Se non c'è un prezzo verificabile, la pizzeria non entra nell'indice.</p></div>
+    </div>
+    <div class="passo"><div class="num">→</div><h4>Hai visto un prezzo sbagliato?</h4><p>Segnalalo: entra nello stesso ciclo di verifica. <a href="#" id="linkSegnalaHome" style="color:var(--rosso)">Segnala ora</a>.</p></div>
   </div>
 </div>
 
-<div id="cityView">
-  <button class="back-btn" onclick="goHome()">← Torna alla home</button>
-  <div class="city-card" id="cityCard"></div>
-  <div class="share-box">
-    <div class="share-text">Condividi il prezzo della tua città</div>
-    <div class="share-btns">
-      <button class="btn btn-primary" onclick="shareNative()">📤 Condividi</button>
-      <button class="btn btn-ghost" onclick="copyLink()">🔗 Copia link</button>
-      <button class="btn btn-x" onclick="shareX()">𝕏 Posta</button>
-    </div>
+<div id="vistaCitta">
+  <button class="torna" onclick="vaiHome()">← torna all'indice</button>
+  <article class="scontrino" id="scontrino" aria-live="polite"></article>
+  <div class="condividi">
+    <button class="btn-condividi primario" onclick="condividiNativo()">Condividi</button>
+    <button class="btn-condividi" onclick="copiaLink()">Copia link</button>
+    <button class="btn-condividi" onclick="postaSuX()">Post su X</button>
   </div>
-  <div class="list-header">
-    <div class="list-title" id="listTitle">Tutte le pizzerie</div>
-  </div>
-  <div class="pizza-list" id="pizzaList"></div>
+  <div id="elencoExtra"></div>
 </div>
 
 <footer>
-  Margherita Index &copy; 2026 &nbsp;·&nbsp;
-  <a href="https://github.com/Seve1995/margherita-index" target="_blank">GitHub</a>
-  &nbsp;·&nbsp; <a href="metodologia.html">Metodologia</a>
-  &nbsp;·&nbsp; Dati raccolti automaticamente da fonti pubbliche
+  <span>Margherita Index © 2026 — dati aperti, metodo aperto</span>
+  <span><a href="https://github.com/Seve1995/margherita-index-site" target="_blank" rel="noopener">dati</a> · <a href="metodologia.html">metodologia</a> · <a href="https://github.com/Seve1995/margherita-index" target="_blank" rel="noopener">pipeline</a></span>
 </footer>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
-let DATA = null, allCities = [], currentCity = null, NAT_AVG = 7.64;
-const $ = id => document.getElementById(id);
+let DATI=null, tutteCitta=[], cittaCorrente=null, MEDIA_NAZ=7.64;
+const $=id=>document.getElementById(id);
 
 fetch('app_data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
-  DATA = d;
-  allCities = Object.keys(DATA).sort();
-  buildStats();
-  buildRankings();
-  const p = new URLSearchParams(location.search).get('city');
-  if(p && DATA[p]) showCity(p);
-}).catch(()=>{
-  $('natAvg').textContent='Errore caricamento';
-});
+  DATI=d;
+  tutteCitta=Object.keys(DATI).sort();
+  costruisciStatistiche();
+  costruisciClassifiche();
+  const q=new URLSearchParams(location.search).get('city');
+  if(q&&DATI[q])mostraCitta(q);
+}).catch(()=>{ $('mediaNazionale').textContent='—'; });
 
-function buildStats(){
-  // Only real cities (>=10 pizzerias) for meaningful coverage stats
-  const realCities = allCities.filter(c=>DATA[c].t>=10);
-  let totalT=0, totalC=0;
-  realCities.forEach(c=>{totalT+=DATA[c].t||0;totalC+=(DATA[c].cs||DATA[c].c||0);});
-  $('nCities').textContent=allCities.length.toLocaleString('it');
-  $('nPizz').textContent=totalT.toLocaleString('it');
-  $('nPrices').textContent=totalC.toLocaleString('it');
-  $('coverage').textContent=(totalT?Math.round(totalC/totalT*100):0)+'%';
-  // Weighted national avg (standard pizzas only)
-  let sum=0,cnt=0;
-  realCities.forEach(c=>{const d=DATA[c];if(d.avg&&d.cs){sum+=d.avg*d.cs;cnt+=d.cs;}});
-  if(cnt) NAT_AVG=sum/cnt;
-  $('natAvg').textContent='\u20ac'+NAT_AVG.toFixed(2);
+function costruisciStatistiche(){
+  const reali=tutteCitta.filter(c=>DATI[c].t>=10);
+  let totT=0,totC=0;
+  reali.forEach(c=>{totT+=DATI[c].t||0; totC+=(DATI[c].cs||DATI[c].c||0);});
+  $('nCitta').textContent=tutteCitta.length;
+  $('nPizzerie').textContent=totT.toLocaleString('it');
+  $('nPrezzi').textContent=totC.toLocaleString('it');
+  $('nCopertura').textContent=(totT?Math.round(totC/totT*100):0)+'%';
+  let somma=0,cnt=0;
+  reali.forEach(c=>{const d=DATI[c]; if(d.avg&&d.cs){somma+=d.avg*d.cs; cnt+=d.cs;}});
+  if(cnt)MEDIA_NAZ=somma/cnt;
+  $('mediaNazionale').textContent=MEDIA_NAZ.toFixed(2).replace('.',',');
+  $('coperturaLinea').textContent=`Copertura raccolta: ${Math.round(totC/Math.max(1,totT)*100)}%.`;
 }
 
-function buildRankings(){
-  const cities = allCities.filter(c=>DATA[c].avg && DATA[c].c>=3);
-  const sorted = [...cities].sort((a,b)=>DATA[a].avg-DATA[b].avg);
-  const cheap = sorted.slice(0,8);
-  const exp = sorted.slice(-8).reverse();
-  $('cheapList').innerHTML = cheap.map((c,i)=>`
-    <div class="rank-row" onclick="showCity('${esc(c)}')">
-      <span class="rank-num">${i+1}</span>
-      <span class="rank-name">${c}</span>
-      <span class="rank-price cheap">€${DATA[c].avg.toFixed(2)}</span>
+function costruisciClassifiche(){
+  const citta=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||DATI[c].c||0)>=3);
+  const ordinate=[...citta].sort((a,b)=>DATI[a].avg-DATI[b].avg);
+  const eco=ordinate.slice(0,8), care=[...ordinate].slice(-8).reverse();
+  $('listaEconomiche').innerHTML=eco.map((c,i)=>`
+    <div class="riga-citta" data-citta="${esc(c)}" role="button" tabindex="0">
+      <span class="pos">${String(i+1).padStart(2,'0')}</span>
+      <span class="nome-citta">${esc(c)}</span>
+      <span class="prezzo-citta prezzo-basso">€${DATI[c].avg.toFixed(2).replace('.',',')}</span>
     </div>`).join('');
-  $('expList').innerHTML = exp.map((c,i)=>`
-    <div class="rank-row" onclick="showCity('${esc(c)}')">
-      <span class="rank-num">${i+1}</span>
-      <span class="rank-name">${c}</span>
-      <span class="rank-price exp">€${DATA[c].avg.toFixed(2)}</span>
+  $('listaCare').innerHTML=care.map((c,i)=>`
+    <div class="riga-citta" data-citta="${esc(c)}" role="button" tabindex="0">
+      <span class="pos">${String(i+1).padStart(2,'0')}</span>
+      <span class="nome-citta">${esc(c)}</span>
+      <span class="prezzo-citta prezzo-alto">€${DATI[c].avg.toFixed(2).replace('.',',')}</span>
     </div>`).join('');
+  document.querySelectorAll('.riga-citta').forEach(el=>{
+    el.addEventListener('click',()=>mostraCitta(el.dataset.citta));
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();mostraCitta(el.dataset.citta);}});
+  });
 }
 
-// Search
-const searchEl=$('search'), suggEl=$('sugg');
-searchEl.addEventListener('input',()=>{
-  const q=searchEl.value.toLowerCase().trim();
-  if(!q||!DATA){suggEl.style.display='none';return;}
-  const m=allCities.filter(c=>c.toLowerCase().includes(q)).slice(0,7);
-  if(!m.length){suggEl.style.display='none';return;}
-  suggEl.innerHTML=m.map(c=>{
-    const d=DATA[c];
-    const avg=d.avg?'€'+d.avg.toFixed(2):'N/D';
-    const cov=d.t?Math.round(d.c/d.t*100)+'%':'';
-    return`<div class="sugg-item" data-city="${esc(c)}"><span class="city-name">${c}</span><span class="city-meta">${avg} · ${cov} copertura</span></div>`;
+// ricerca
+const cercaEl=$('cerca'), sugEl=$('suggerimenti');
+cercaEl.addEventListener('input',()=>{
+  const q=cercaEl.value.toLowerCase().trim();
+  if(!q||!DATI){sugEl.style.display='none';return;}
+  const m=tutteCitta.filter(c=>c.toLowerCase().includes(q)).slice(0,7);
+  if(!m.length){sugEl.style.display='none';return;}
+  sugEl.innerHTML=m.map(c=>{
+    const d=DATI[c];
+    const media=d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—';
+    const cov=d.t?Math.round((d.c||0)/d.t*100)+'%':'';
+    return `<div class="suggerimento" data-citta="${esc(c)}"><span class="nome">${esc(c)}</span><span class="meta">${media} · cov. ${cov}</span></div>`;
   }).join('');
-  suggEl.style.display='block';
-  suggEl.querySelectorAll('.sugg-item').forEach(el=>el.addEventListener('click',()=>showCity(el.dataset.city)));
+  sugEl.style.display='block';
+  sugEl.querySelectorAll('.suggerimento').forEach(el=>el.addEventListener('click',()=>mostraCitta(el.dataset.citta)));
 });
-document.addEventListener('click',e=>{if(!searchEl.contains(e.target))suggEl.style.display='none';});
-searchEl.addEventListener('keydown',e=>{if(e.key==='Escape')suggEl.style.display='none';});
+document.addEventListener('click',e=>{if(!cercaEl.contains(e.target))sugEl.style.display='none';});
+cercaEl.addEventListener('keydown',e=>{if(e.key==='Escape')sugEl.style.display='none';});
 
-function showCity(city){
-  if(!DATA||!DATA[city])return;
-  currentCity=city;
-  suggEl.style.display='none';
-  searchEl.value=city;
-  const d=DATA[city];
-  // Rank
-  const ranked=allCities.filter(c=>DATA[c].avg&&(DATA[c].cs||DATA[c].c||0)>=3).sort((a,b)=>DATA[a].avg-DATA[b].avg);
-  const rank=ranked.indexOf(city)+1;
-  const total=ranked.length;
-  const diff=d.avg?d.avg-NAT_AVG:0;
-  const diffStr=d.avg?(diff>=0?'+':'')+'\u20ac'+diff.toFixed(2)+' rispetto alla media (solo pizza intera)':'';
-  const pct=d.avg?Math.min(100,Math.max(5,(d.avg/15)*100)):50;
-  const priceClass=d.avg<=6.5?'price-low':d.avg<=9?'price-mid':'price-high';
-  const rankText=rank?`#${rank} su ${total} città (${rank<=5?'🟢 tra le più economiche':rank>=total-5?'🔴 tra le più care':'🟡 nella media'})`:'';
-  const cs = d.cs || d.c || 0;
-  $('cityCard').innerHTML=`
-    <div class="city-top">
-      <div>
-        <div class="city-name-big">${city}</div>
-        <div class="city-rank-line">${rankText}</div>
-      </div>
-      <div style="text-align:right">
-        <div class="city-price-big ${priceClass}">${d.avg?'\u20ac'+d.avg.toFixed(2):'N/D'}</div>
-        <div style="font-size:.72em;color:var(--muted);margin-top:4px">${diffStr}</div>
-      </div>
-    </div>
-    <div class="city-stats-row">
-      <div class="cstat"><div class="v" style="color:var(--blue)">${d.t||0}</div><div class="l">Pizzerie</div></div>
-      <div class="cstat"><div class="v" style="color:var(--green)">${cs}</div><div class="l">Prezzi standard</div></div>
-      <div class="cstat"><div class="v">${d.t?Math.round(cs/d.t*100)+'%':'\u2014'}</div><div class="l">Copertura</div></div>
-      <div class="cstat"><div class="v" style="color:var(--green)">${d.min?'\u20ac'+d.min.toFixed(2):'\u2014'}</div><div class="l">Min</div></div>
-      <div class="cstat"><div class="v" style="color:var(--red)">${d.max?'\u20ac'+d.max.toFixed(2):'\u2014'}</div><div class="l">Max</div></div>
-    </div>
-    ${d.avg?`<div class="vs-bar">
-      <div class="vs-label">Posizione rispetto alla media nazionale (€${NAT_AVG.toFixed(2)})</div>
-      <div class="vs-track"><div class="vs-fill" style="width:${pct}%"></div></div>
-      <div class="vs-markers"><span>più economica</span><span>più cara</span></div>
-    </div>`:''}`;
-  // Pizza list — standard first, then non-standard, then missing
+function mostraCitta(citta){
+  if(!DATI||!DATI[citta])return;
+  cittaCorrente=citta;
+  sugEl.style.display='none';
+  cercaEl.value='';
+  const d=DATI[citta];
+  const ordinate=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||DATI[c].c||0)>=3).sort((a,b)=>DATI[a].avg-DATI[b].avg);
+  const pos=ordinate.indexOf(citta)+1, quante=ordinate.length;
+  const diff=d.avg?d.avg-MEDIA_NAZ:0;
+  const diffTxt=d.avg?(diff>=0?'+':'−')+'€'+Math.abs(diff).toFixed(2).replace('.',',')+' vs media nazionale':'';
+  const pct=d.avg?Math.min(100,Math.max(5,d.avg/15*100)):50;
+  const cs=d.cs||d.c||0;
+  const fascia=!d.avg?'':(pos<=Math.ceil(quante*.2)?'tra le più economiche':pos>=quante-Math.ceil(quante*.2)+1?'tra le più care':'nella media');
+
   const std=(d.p||[]).filter(p=>p.p&&p.f==='standard').sort((a,b)=>a.p-b.p);
-  const notStd=(d.p||[]).filter(p=>p.p&&p.f!=='standard').sort((a,b)=>a.p-b.p);
-  const nope=(d.p||[]).filter(p=>!p.p);
-  $('listTitle').textContent=`${std.length} prezzi pizza intera · ${notStd.length} trancio/teglia · ${nope.length} senza prezzo`;
-  const renderCard = p => {
-    const isStd = p.f==='standard';
-    const fmtBadge = p.f==='al trancio'  ? '<span class="pbadge pbadge-trancio">Al trancio</span>' :
-                     p.f==='mezza teglia' ? '<span class="pbadge pbadge-teglia">Mezza teglia</span>' :
-                     p.f==='gourmet'      ? '<span class="pbadge pbadge-gourmet">Gourmet</span>' :
-                     (!isStd && p.f)      ? `<span class="pbadge pbadge-nd">${p.f}</span>` : '';;
-    const mapsBtn = p.m?`<a class="plink" href="${p.m}" target="_blank" rel="noopener">📍 Maps</a>`:
-                       `<a class="plink" href="https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener">📍 Maps</a>`;
-    const telBtn = p.ph?`<a class="plink" href="tel:${p.ph}">📞 ${p.ph}</a>`:
-                        (p.pid?`<a class="plink" href="https://maps.google.com/maps?cid=${p.pid}" target="_blank" rel="noopener">ℹ️ Info</a>`:'');
-    const priceNote = isStd?'':`<div class="pprice-note">escluso dalla media</div>`;
-    const alternatives = (p.price_options||[]).filter(o=>
-      !(Number(o.prezzo)===Number(p.p) && (o.formato||'standard')===(p.f||'standard'))
-    );
-    const alternativeHtml = alternatives.length ? `<div class="p-alt">${alternatives.map(o=>
-      `<div>${o.formato||'alternativa'}: <strong>€${Number(o.prezzo).toFixed(2)}</strong></div>`
-    ).join('')}</div>` : '';
-    return `<div class="p-card">
-      <div style="flex:1">
-        <div class="pname">${p.n||''}</div>
-        <div class="paddr">${p.a||''}</div>
-        <div class="pmeta">${fmtBadge}${mapsBtn}${telBtn}</div>
+  const nonStd=(d.p||[]).filter(p=>p.p&&p.f!=='standard').sort((a,b)=>a.p-b.p);
+  const senza=(d.p||[]).filter(p=>!p.p);
+
+  const voce=p=>{
+    const maps=p.m?p.m:`https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}`;
+    const tagFmt=p.f&&p.f!=='standard'?`<span class="tag">${esc(p.f)}</span>`:'';
+    const tel=p.ph?`<span class="tag">☎ ${esc(p.ph)}</span>`:(p.pid?`<span class="tag"><a href="https://maps.google.com/maps?cid=${p.pid}" target="_blank" rel="noopener" style="color:inherit">info</a></span>`:'');
+    const alt=(p.price_options||[]).filter(o=>!(Number(o.prezzo)===Number(p.p)&&(o.formato||'standard')===(p.f||'standard')));
+    return `<div class="voce">
+      <div class="sx">
+        <div class="n-pizzeria">${esc(p.n||'')}</div>
+        <div class="indirizzo">${esc(p.a||'')}</div>
+        <div class="tag-linea">${tagFmt}<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">mappa</a></span>${tel}</div>
       </div>
-      <div><span class="pprice ${priceColor(p.p)}">\u20ac${p.p.toFixed(2)}</span>${priceNote}${alternativeHtml}</div>
+      <div class="dx">
+        <div class="prezzo-scontrino">€${p.p.toFixed(2).replace('.',',')}</div>
+        ${p.f&&p.f!=='standard'?'<div class="nota-prezzo">fuori media</div>':''}
+        ${alt.length?`<div class="prezzo-alternativa">${alt.map(o=>`${esc(o.formato||'alt')} €${Number(o.prezzo).toFixed(2).replace('.',',')}`).join('<br>')}</div>`:''}
+      </div>
     </div>`;
   };
-  const missingCards = nope.slice(0,5).map(p=>{
-    const mapsBtn=`<a class="plink" href="https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener">📍 Maps</a>`;
-    return `<div class="p-card missing"><div style="flex:1"><div class="pname">${p.n||''}</div><div class="paddr">Prezzo non disponibile</div><div class="pmeta">${mapsBtn}</div></div></div>`;
+  const mute=senza.slice(0,5).map(p=>`<div class="voce muta"><div class="sx"><div class="n-pizzeria">${esc(p.n||'')}</div><div class="indirizzo">prezzo non ancora verificato</div></div><div class="dx"><div class="prezzo-scontrino">·</div></div></div>`);
+
+  $('scontrino').innerHTML=`
+    <div class="intesta">
+      <div class="titolo">MARGHERITA INDEX</div>
+      <div class="sub">ricevuta di confronto · capoluogo: ${esc(citta.toUpperCase())}</div>
+    </div>
+    <div class="riga-totale">
+      <span class="tot-label">Margherita · media città</span>
+      <span class="tot-valore">${d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—'}</span>
+    </div>
+    <div class="timbro">Indice verificato · fonte originale · ${new Date().getFullYear()}</div>
+    <div class="pos-linea">#${pos} su ${quante} capoluoghi${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}</div>
+    <div class="mini-stats">
+      <span>pizzerie: <b>${d.t||0}</b></span>
+      <span>prezzi intera: <b>${cs}</b></span>
+      <span>min: <b>${d.min?'€'+d.min.toFixed(2).replace('.',','):'—'}</b></span>
+      <span>max: <b>${d.max?'€'+d.max.toFixed(2).replace('.',','):'—'}</b></span>
+    </div>
+    ${std.map(voce).join('')}
+    ${nonStd.map(voce).join('')}
+    ${mute.join('')}
+    <div class="codice-barre" aria-hidden="true"></div>
+    <div class="codice-testo">MARGHERITA·INDEX·${esc(citta.toUpperCase())}</div>
+    <div class="segnala-riga">
+      <span>prezzo cambiato?</span>
+      <a href="#" id="linkSegnalaCitta">SEGNALA IL PREZZO GIUSTO →</a>
+    </div>`;
+  collegaSegnalazione(citta);
+  $('elencoExtra').innerHTML='';
+  $('contenutoHome').style.display='none';
+  $('vistaCitta').style.display='block';
+  history.pushState(null,'','?city='+encodeURIComponent(citta));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function collegaSegnalazione(citta){
+  const url='https://github.com/Seve1995/margherita-index-site/issues/new?template=segnalazione-prezzo.yml&citta='+encodeURIComponent(citta);
+  ['linkSegnalaCitta','linkSegnalaHome'].forEach(id=>{
+    const el=$(id); if(el){el.href=url;}
   });
-  $('pizzaList').innerHTML=[...std.map(renderCard),...notStd.map(renderCard),...missingCards].join('');
-  $('homeContent').style.display='none';
-  $('cityView').style.display='block';
-  history.pushState(null,'','?city='+encodeURIComponent(city));
+}
+
+function vaiHome(e){
+  if(e)e.preventDefault();
+  cittaCorrente=null;
+  $('vistaCitta').style.display='none';
+  $('contenutoHome').style.display='block';
+  cercaEl.value='';
+  history.pushState(null,'','/');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function goHome(){
-  currentCity=null;
-  $('cityView').style.display='none';
-  $('homeContent').style.display='block';
-  searchEl.value='';
-  history.pushState(null,'','.');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 
-function priceColor(p){return p<=6.5?'price-low':p<=9?'price-mid':'price-high';}
-function esc(s){return s.replace(/"/g,'&quot;').replace(/'/g,"\\'");}
-
-function getShareText(){
-  if(!currentCity||!DATA[currentCity])return'';
-  const d=DATA[currentCity];
-  const avg=d.avg?'€'+d.avg.toFixed(2):'N/D';
-  return`🍕 A ${currentCity} la Margherita media costa ${avg}\nScopri il prezzo nella tua città → margherita-index.it`;
+function testoCondivisione(){
+  if(!cittaCorrente||!DATI[cittaCorrente])return '';
+  const d=DATI[cittaCorrente];
+  return `A ${cittaCorrente} la Margherita media costa €${d.avg?d.avg.toFixed(2).replace('.',','):'?'}\nScopri la tua città ↓`;
 }
-
-function shareNative(){
-  const text=getShareText();
-  if(navigator.share){navigator.share({title:'Margherita Index',text,url:location.href});}
-  else copyLink();
+function condividiNativo(){
+  if(navigator.share){navigator.share({title:'Margherita Index',text:testoCondivisione(),url:location.href});}
+  else copiaLink();
 }
-function copyLink(){
-  navigator.clipboard.writeText(location.href).then(()=>toast('Link copiato! 🔗'));
-}
-function shareX(){
-  const text=encodeURIComponent(getShareText()+'\n'+location.href);
-  window.open('https://x.com/intent/tweet?text='+text,'_blank');
+function copiaLink(){navigator.clipboard.writeText(location.href).then(()=>toast('Link copiato'));}
+function postaSuX(){
+  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(testoCondivisione()+'\n'+location.href),'_blank');
 }
 function toast(msg){
-  const t=$('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  const t=$('toast'); t.textContent=msg; t.classList.add('visibile');
+  setTimeout(()=>t.classList.remove('visibile'),2400);
 }
 window.addEventListener('popstate',()=>{
-  const p=new URLSearchParams(location.search).get('city');
-  if(p&&DATA&&DATA[p])showCity(p); else goHome();
+  const q=new URLSearchParams(location.search).get('city');
+  if(q&&DATI&&DATI[q])mostraCitta(q); else vaiHome();
 });
-function toggleTheme(){
+function cambiaTema(){
   const html=document.documentElement;
-  const isDark=html.getAttribute('data-theme')==='dark';
-  html.setAttribute('data-theme',isDark?'light':'dark');
-  $('themeBtn').textContent=isDark?'🌙 Dark':'☀️ Light';
-  localStorage.setItem('theme',isDark?'light':'dark');
+  const attuale=html.getAttribute('data-tema')||
+    (matchMedia('(prefers-color-scheme: dark)').matches?'scuro':'chiaro');
+  const nuovo=attuale==='scuro'?'chiaro':'scuro';
+  html.setAttribute('data-tema',nuovo);
+  localStorage.setItem('tema',nuovo);
 }
-// Restore saved theme
 (function(){
-  const saved=localStorage.getItem('theme')||'dark';
-  document.documentElement.setAttribute('data-theme',saved);
-  window.addEventListener('DOMContentLoaded',()=>{
-    const btn=$('themeBtn');
-    if(btn)btn.textContent=saved==='dark'?'🌙 Dark':'☀️ Light';
-  });
+  const salvato=localStorage.getItem('tema')||
+    (matchMedia('(prefers-color-scheme: dark)').matches?'scuro':'chiaro');
+  document.documentElement.setAttribute('data-tema',salvato);
 })();
 </script>
 </body>
