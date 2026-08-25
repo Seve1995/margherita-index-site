@@ -1,0 +1,23 @@
+{
+  "_istruzioni": "Monetizzazione Margherita Index. 'attivo': false = il blocco non appare sul sito. Per l'affiliazione Just Eat/Deliveroo (Awin): incolla in 'wrapper' il tuo deep link Awin usando {url_target} dove va l'URL di destinazione codificato. Per Glovo usa 'tag_param' con il tuo parametro di tracking.",
+  "piattaforme": {
+    "glovo": {
+      "etichetta": "Ordina su Glovo",
+      "attivo": false,
+      "target_template": "https://glovoapp.com/it/it/{citta}/",
+      "tag_param": ""
+    },
+    "justeat": {
+      "etichetta": "Ordina su Just Eat",
+      "attivo": false,
+      "target_template": "https://www.justeat.it/search?q=pizza%20{citta}",
+      "wrapper": ""
+    },
+    "deliveroo": {
+      "etichetta": "Ordina su Deliveroo",
+      "attivo": false,
+      "target_template": "https://deliveroo.it/it/restaurants/{citta}/",
+      "wrapper": ""
+    }
+  }
+}

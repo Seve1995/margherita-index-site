@@ -249,6 +249,33 @@ button{font-family:inherit}
 .btn-condividi.primario{background:var(--rosso); border-color:var(--rosso); color:#fff; box-shadow:3px 3px 0 var(--inchiostro)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
 
+/* ── monetizzazione ────────────────────────────────── */
+.sponsor-box{
+  border:1.5px solid var(--inchiostro); background:var(--giallo);
+  padding:18px 20px; margin:30px auto 0; max-width:640px;
+}
+.sponsor-box .etichetta{display:block; margin-bottom:8px; color:var(--inchiostro)}
+.sponsor-box .s-nome{font-weight:800; font-size:17px; letter-spacing:-.01em}
+.sponsor-box .s-testo{font-size:14.5px; line-height:1.5; margin-top:4px; color:var(--inchiostro)}
+.sponsor-box .s-prezzo{font-family:"IBM Plex Mono",monospace; font-size:12px; margin-top:6px}
+.sponsor-box .s-azione{
+  display:inline-block; margin-top:12px; padding:9px 16px;
+  font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600;
+  border:1.5px solid var(--inchiostro); background:var(--carta); color:var(--inchiostro);
+  text-decoration:none; box-shadow:3px 3px 0 var(--inchiostro); transition:transform .12s, box-shadow .12s;
+}
+.sponsor-box .s-azione:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--inchiostro)}
+.affilia-riga{margin:26px auto 0; max-width:640px; text-align:center}
+.affilia-riga .pills{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+.affilia-riga a.pill{
+  font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.04em;
+  text-decoration:none; color:var(--inchiostro);
+  border:1px solid var(--linea); border-radius:999px; padding:8px 14px;
+  transition:border-color .15s;
+}
+.affilia-riga a.pill:hover{border-color:var(--inchiostro)}
+.affilia-riga .nota{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--inchiostro2); margin-top:8px}
+
 /* toast */
 .toast{
   position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px);
@@ -345,7 +372,11 @@ footer a{color:var(--inchiostro)}
 
 <script>
 let DATI=null, tutteCitta=[], cittaCorrente=null, MEDIA_NAZ=7.64;
+let AFFILIAZIONI=null, SPONSOR=null;
 const $=id=>document.getElementById(id);
+
+fetch('affiliazioni.json?v='+Date.now()).then(r=>r.json()).then(d=>{AFFILIAZIONI=d; if(cittaCorrente)costruisciMonetizzazione(cittaCorrente);}).catch(()=>{});
+fetch('sponsorizzati.json?v='+Date.now()).then(r=>r.json()).then(d=>{SPONSOR=d; if(cittaCorrente)costruisciMonetizzazione(cittaCorrente);}).catch(()=>{});
 
 fetch('app_data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
   DATI=d;
@@ -479,11 +510,54 @@ function mostraCitta(citta){
       <a href="#" id="linkSegnalaCitta">SEGNALA IL PREZZO GIUSTO →</a>
     </div>`;
   collegaSegnalazione(citta);
-  $('elencoExtra').innerHTML='';
+  costruisciMonetizzazione(citta);
   $('contenutoHome').style.display='none';
   $('vistaCitta').style.display='block';
   history.pushState(null,'','?city='+encodeURIComponent(citta));
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function slugCitta(c){
+  return c.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+
+function costruisciMonetizzazione(citta){
+  const box=$('elencoExtra');
+  let html='';
+  const spons=((SPONSOR||{}).sponsorizzate||{})[citta]||[];
+  for(const s of spons.slice(0,1)){
+    const voce=(DATI[citta]&&DATI[citta].p||[]).find(p=>(p.n||'').toLowerCase()===(s.nome||'').toLowerCase());
+    const prezzo=voce&&voce.p?`Margherita €${voce.p.toFixed(2).replace('.',',')} — verificata dall'indice`:'';
+    html+=`<div class="sponsor-box">
+      <span class="etichetta">In evidenza · sponsorizzato</span>
+      <div class="s-nome">${esc(s.nome||'')}</div>
+      <div class="s-testo">${esc(s.testo||'')}</div>
+      ${prezzo?`<div class="s-prezzo">${prezzo}</div>`:''}
+      <a class="s-azione" href="${esc(s.url||'#')}" target="_blank" rel="noopener sponsored">${esc(s.bottone||'Visita il sito')} →</a>
+    </div>`;
+  }
+  const attivi=Object.values((AFFILIAZIONI||{}).piattaforme||{}).filter(p=>p.attivo);
+  if(attivi.length){
+    const slug=slugCitta(citta);
+    const pills=attivi.map(p=>{
+      let target=(p.target_template||'').replace('{citta}',encodeURIComponent(slug));
+      let url;
+      if(p.wrapper&&p.wrapper.includes('{url_target}')){
+        url=p.wrapper.replace('{url_target}',encodeURIComponent(target));
+      }else if(p.tag_param){
+        url=target+(target.includes('?')?'&':'?')+p.tag_param;
+      }else{
+        url=target;
+      }
+      return `<a class="pill" href="${esc(url)}" target="_blank" rel="noopener sponsored">${esc(p.etichetta||'Ordina')}</a>`;
+    }).join('');
+    html+=`<div class="affilia-riga">
+      <div class="pills">${pills}</div>
+      <div class="nota">Link di affiliazione: una commissione per noi, nessun costo per te. Non influenza i dati dell'indice.</div>
+    </div>`;
+  }
+  box.innerHTML=html;
 }
 
 function collegaSegnalazione(citta){

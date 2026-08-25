@@ -1,0 +1,4 @@
+{
+  "_istruzioni": "Pizzerie sponsorizzate, per città. Appaiono SOLO nel box 'In evidenza' sotto lo scontrino, mai nell'indice né nelle classifiche. Campi: nome (per mostrare il prezzo verificato se presente nell'indice), testo (max ~140 caratteri), url (link del sito/pagina della pizzeria), bottone (testo del pulsante).",
+  "sponsorizzate": {}
+}
