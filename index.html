@@ -219,6 +219,8 @@ button{font-family:inherit}
 .voce .indirizzo{font-size:10.5px; color:#666; margin-top:1px; word-break:break-word}
 .voce .tag-linea{margin-top:3px; display:flex; gap:6px; flex-wrap:wrap; align-items:center}
 .voce .tag{font-size:9.5px; border:1px solid #999; padding:0 5px; border-radius:3px; color:#444}
+.voce .tag.rating{background:var(--giallo); border-color:var(--giallo)}
+.voce .tag.rating a{color:#17181c; font-weight:600}
 .voce .dx{text-align:right}
 .voce .prezzo-scontrino{font-weight:600; font-size:15px}
 .voce .nota-prezzo{font-size:9.5px; color:#888}
@@ -463,18 +465,17 @@ function mostraCitta(citta){
 
   const voce=p=>{
     const maps=p.m?p.m:`https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}`;
-    const FONTE={glovo:'via Glovo',justeat:'via Just Eat',deliveroo:'via Deliveroo',public_search:'ricerca pubblica'};
+    const FONTE={glovo:'Glovo',justeat:'Just Eat',deliveroo:'Deliveroo',public_search:'ricerca pubblica',website:'sito ufficiale'};
     const tagFmt=p.f&&p.f!=='standard'?`<span class="tag">${esc(p.f)}</span>`:'';
-    const tagFonte=p.s&&FONTE[p.s]?`<span class="tag">${FONTE[p.s]}</span>`:'';
     const tel=p.ph?`<span class="tag">☎ ${esc(p.ph)}</span>`:(p.pid?`<span class="tag"><a href="https://maps.google.com/maps?cid=${p.pid}" target="_blank" rel="noopener" style="color:inherit">info</a></span>`:'');
-    const tagLink=p.u?`<span class="tag"><a href="${esc(p.u)}" target="_blank" rel="noopener" style="color:inherit">fonte ↗</a></span>`:'';
-    const tagRating=p.r?`<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">★ ${p.r.toFixed(1).replace('.',',')}${p.rn?' ('+p.rn+')':''}</a></span>`:'';
+    const tagRating=p.r?`<span class="tag rating"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">★ ${p.r.toFixed(1).replace('.',',')}${p.rn?' · '+p.rn:''}</a></span>`:`<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">mappa</a></span>`;
+    const tagLink=p.u?`<span class="tag"><a href="${esc(p.u)}" target="_blank" rel="noopener" style="color:inherit">fonte: ${FONTE[p.s]||'menu'} ↗</a></span>`:'';
     const alt=(p.price_options||[]).filter(o=>!(Number(o.prezzo)===Number(p.p)&&(o.formato||'standard')===(p.f||'standard')));
     return `<div class="voce">
       <div class="sx">
         <div class="n-pizzeria">${esc(p.n||'')}</div>
         <div class="indirizzo">${esc(p.a||'')}</div>
-        <div class="tag-linea">${tagFmt}${tagFonte}${tagRating}<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">mappa</a></span>${tel}${tagLink}</div>
+        <div class="tag-linea">${tagFmt}${tagRating}${tel}${tagLink}</div>
       </div>
       <div class="dx">
         <div class="prezzo-scontrino">€${p.p.toFixed(2).replace('.',',')}</div>
