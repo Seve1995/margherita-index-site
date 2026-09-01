@@ -202,11 +202,6 @@ button{font-family:inherit}
 .scontrino .tot-valore{font-size:34px; font-weight:600; letter-spacing:-.02em}
 .scontrino .pos-linea{font-size:11.5px; color:#555; margin-bottom:14px}
 .scontrino .mini-stats{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:11px; color:#444; margin-bottom:14px}
-.timbro{
-  display:inline-block; padding:3px 8px; margin-right:8px;
-  border:1.5px solid var(--verde); border-radius:999px;
-  color:var(--verde); font-weight:600; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
-}
 .mute-cta{
   font-size:9.5px; color:#888; text-decoration:underline; text-underline-offset:2px;
 }
@@ -469,7 +464,7 @@ function mostraCitta(citta){
     const tagFmt=p.f&&p.f!=='standard'?`<span class="tag">${esc(p.f)}</span>`:'';
     const tel=p.ph?`<span class="tag">☎ ${esc(p.ph)}</span>`:(p.pid?`<span class="tag"><a href="https://maps.google.com/maps?cid=${p.pid}" target="_blank" rel="noopener" style="color:inherit">info</a></span>`:'');
     const tagRating=p.r?`<span class="tag rating"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">★ ${p.r.toFixed(1).replace('.',',')}${p.rn?' · '+p.rn:''}</a></span>`:`<span class="tag"><a href="${esc(maps)}" target="_blank" rel="noopener" style="color:inherit">mappa</a></span>`;
-    const tagLink=p.u?`<span class="tag"><a href="${esc(p.u)}" target="_blank" rel="noopener" style="color:inherit">fonte: ${FONTE[p.s]||'menu'} ↗</a></span>`:'';
+    const tagLink=p.u?`<span class="tag"><a href="${esc(p.u)}" target="_blank" rel="noopener" style="color:inherit">fonte: ${FONTE[p.s]||'menu'} ↗</a></span>`:(p.s&&p.s!=='website'?`<span class="tag">via ${FONTE[p.s]}</span>`:'');
     const alt=(p.price_options||[]).filter(o=>!(Number(o.prezzo)===Number(p.p)&&(o.formato||'standard')===(p.f||'standard')));
     return `<div class="voce">
       <div class="sx">
@@ -492,7 +487,6 @@ function mostraCitta(citta){
       <span class="tot-valore">${d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—'}</span>
     </div>
     <div class="pos-linea">
-      <span class="timbro" title="Prezzi letti dai menu originali e verificati">verificato</span>
       #${pos} su ${quante} capoluoghi${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}
     </div>
     <div class="mini-stats">
