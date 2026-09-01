@@ -194,9 +194,6 @@ button{font-family:inherit}
   padding:34px 26px 40px;
   font-family:"IBM Plex Mono",monospace; font-size:13px; line-height:1.55;
 }
-.scontrino .intesta{text-align:center; border-bottom:1px dashed #999; padding-bottom:14px; margin-bottom:14px}
-.scontrino .intesta .titolo{font-weight:600; font-size:15px; letter-spacing:.04em}
-.scontrino .intesta .sub{font-size:11px; color:#666; margin-top:4px}
 .scontrino .riga-totale{
   display:flex; justify-content:space-between; align-items:baseline; gap:10px;
   margin:6px 0 14px; padding:10px 0; border-top:1px dashed #999; border-bottom:2px solid #1c1d21;
@@ -206,12 +203,14 @@ button{font-family:inherit}
 .scontrino .pos-linea{font-size:11.5px; color:#555; margin-bottom:14px}
 .scontrino .mini-stats{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:11px; color:#444; margin-bottom:14px}
 .timbro{
-  float:right; width:104px; height:104px; border:2.5px solid var(--rosso); border-radius:50%;
-  display:flex; align-items:center; justify-content:text-center; text-align:center;
-  color:var(--rosso); font-weight:600; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
-  transform:rotate(9deg); padding:10px; line-height:1.35; opacity:.85;
-  margin:-6px -4px 6px 10px;
+  display:inline-block; padding:3px 8px; margin-right:8px;
+  border:1.5px solid var(--verde); border-radius:999px;
+  color:var(--verde); font-weight:600; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
 }
+.mute-cta{
+  font-size:9.5px; color:#888; text-decoration:underline; text-underline-offset:2px;
+}
+.mute-cta:hover{color:var(--rosso)}
 /* voci scontrino = pizzerie */
 .voce{padding:7px 0; border-bottom:1px dotted #bbb; display:flex; gap:10px; justify-content:space-between; align-items:flex-start}
 .voce .sx{flex:1; min-width:0}
@@ -450,6 +449,7 @@ function mostraCitta(citta){
   cittaCorrente=citta;
   sugEl.style.display='none';
   cercaEl.value='';
+  document.querySelector('.indice').style.display='none';
   const d=DATI[citta];
   const ordinate=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||DATI[c].c||0)>=3).sort((a,b)=>DATI[a].avg-DATI[b].avg);
   const pos=ordinate.indexOf(citta)+1, quante=ordinate.length;
@@ -484,19 +484,17 @@ function mostraCitta(citta){
       </div>
     </div>`;
   };
-  const mute=senza.slice(0,5).map(p=>`<div class="voce muta"><div class="sx"><div class="n-pizzeria">${esc(p.n||'')}</div><div class="indirizzo">prezzo non ancora verificato</div></div><div class="dx"><div class="prezzo-scontrino">·</div></div></div>`);
+  const mute=senza.slice(0,5).map(p=>`<div class="voce muta"><div class="sx"><a class="n-pizzeria" href="${'https://maps.google.com/?q='+encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(p.n||'')}</a></div><div class="dx"><a href="${collegaSegnalaUrl(citta)}" target="_blank" rel="noopener" class="mute-cta">conosci il prezzo?</a></div></div>`);
 
   $('scontrino').innerHTML=`
-    <div class="intesta">
-      <div class="titolo">MARGHERITA INDEX</div>
-      <div class="sub">ricevuta di confronto · capoluogo: ${esc(citta.toUpperCase())}</div>
-    </div>
     <div class="riga-totale">
-      <span class="tot-label">Margherita · media città</span>
+      <span class="tot-label">Margherita · media ${esc(citta)}</span>
       <span class="tot-valore">${d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—'}</span>
     </div>
-    <div class="timbro">Indice verificato · fonte originale · ${new Date().getFullYear()}</div>
-    <div class="pos-linea">#${pos} su ${quante} capoluoghi${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}</div>
+    <div class="pos-linea">
+      <span class="timbro" title="Prezzi letti dai menu originali e verificati">verificato</span>
+      #${pos} su ${quante} capoluoghi${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}
+    </div>
     <div class="mini-stats">
       <span>pizzerie: <b>${d.t||0}</b></span>
       <span>prezzi intera: <b>${cs}</b></span>
@@ -564,8 +562,9 @@ function costruisciMonetizzazione(citta){
   box.innerHTML=html;
 }
 
+let collegaSegnalaUrl = citta => "https://github.com/Seve1995/margherita-index-site/issues/new?template=segnalazione-prezzo.yml&citta="+encodeURIComponent(citta);
 function collegaSegnalazione(citta){
-  const url='https://github.com/Seve1995/margherita-index-site/issues/new?template=segnalazione-prezzo.yml&citta='+encodeURIComponent(citta);
+  const url=collegaSegnalaUrl(citta);
   ['linkSegnalaCitta','linkSegnalaHome'].forEach(id=>{
     const el=$(id); if(el){el.href=url;}
   });
@@ -575,6 +574,7 @@ function vaiHome(e){
   if(e)e.preventDefault();
   cittaCorrente=null;
   $('vistaCitta').style.display='none';
+  document.querySelector('.indice').style.display='';
   $('contenutoHome').style.display='block';
   cercaEl.value='';
   history.pushState(null,'','/');
