@@ -1,23 +1,25 @@
 {
-  "_istruzioni": "Monetizzazione Margherita Index. 'attivo': false = il blocco non appare sul sito. Per l'affiliazione Just Eat/Deliveroo (Awin): incolla in 'wrapper' il tuo deep link Awin usando {url_target} dove va l'URL di destinazione codificato. Per Glovo usa 'tag_param' con il tuo parametro di tracking.",
+  "_istruzioni": "Monetizzazione Margherita Index. 'attivo': false = il blocco non appare sul sito. In 'wrapper' incolla il tuo deep link Awin usando {url_target} al posto dell'URL di destinazione codificato. Stato reti (verif. set 2026): Just Eat IT = Awin merchant 30757 (link pronto sotto); Deliveroo IT = Partnerize (altro network, serve account separato); Glovo = nessun programma affiliato pubblico per l'Italia.",
   "piattaforme": {
     "glovo": {
       "etichetta": "Ordina su Glovo",
       "attivo": false,
       "target_template": "https://glovoapp.com/it/it/{citta}/",
-      "tag_param": ""
+      "tag_param": "",
+      "note": "Nessun programma affiliato pubblico IT finora"
     },
     "justeat": {
       "etichetta": "Ordina su Just Eat",
       "attivo": false,
       "target_template": "https://www.justeat.it/search?q=pizza%20{citta}",
-      "wrapper": ""
+      "wrapper": "https://www.awin1.com/cread.php?awinmid=30757&awinaffid=XXXXXXX&ued={url_target}"
     },
     "deliveroo": {
       "etichetta": "Ordina su Deliveroo",
       "attivo": false,
       "target_template": "https://deliveroo.it/it/restaurants/{citta}/",
-      "wrapper": ""
+      "wrapper": "",
+      "note": "Programma su Partnerize, non Awin"
     }
   }
 }

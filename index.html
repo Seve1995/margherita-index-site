@@ -272,6 +272,52 @@ button{font-family:inherit}
 .affilia-riga a.pill:hover{border-color:var(--inchiostro)}
 .affilia-riga .nota{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--inchiostro2); margin-top:8px}
 
+/* ── segnalazione: GUI dedicata ────────────────────── */
+.modale-sfondo{
+  position:fixed; inset:0; z-index:200; display:flex; align-items:center;
+  justify-content:center; padding:18px;
+  background:rgba(0,0,0,.55); backdrop-filter:blur(3px);
+}
+.modale-sfondo[hidden]{display:none}
+.modale{
+  width:min(540px,100%); max-height:calc(100vh - 36px); overflow-y:auto;
+  background:var(--carta); border:1.5px solid var(--inchiostro);
+  box-shadow:8px 8px 0 var(--ombra); padding:24px 22px 22px;
+}
+.modale .m-testa{display:flex; justify-content:space-between; gap:12px; margin-bottom:4px}
+.modale .m-titolo{font-weight:800; font-size:22px; letter-spacing:-.02em}
+.modale .m-sottotitolo{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--inchiostro2); margin-top:2px}
+.modale .m-chiudi{
+  font-family:"IBM Plex Mono",monospace; font-size:14px; cursor:pointer;
+  background:none; border:1.5px solid var(--linea); color:var(--inchiostro2);
+  width:34px; height:34px; flex:none; border-radius:0;
+}
+.modale .m-chiudi:hover{border-color:var(--inchiostro); color:var(--inchiostro)}
+.modale label{
+  display:block; font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--inchiostro2); margin:14px 0 6px;
+}
+.modale input,.modale textarea{
+  width:100%; padding:11px 12px; font:500 15px "Bricolage Grotesque",sans-serif;
+  background:var(--carta2); color:var(--inchiostro); border:1.5px solid var(--linea);
+  border-radius:0; outline:none;
+}
+.modale input:focus,.modale textarea:focus{border-color:var(--inchiostro)}
+.modale textarea{min-height:72px; resize:vertical}
+.modale .m-aiuto{font-size:12px; color:var(--inchiostro2); margin-top:4px}
+.modale .m-azioni{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap}
+.modale .btn-modale{
+  font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600;
+  padding:12px 16px; cursor:pointer; border-radius:0;
+  border:1.5px solid var(--inchiostro); background:var(--carta); color:var(--inchiostro);
+  box-shadow:3px 3px 0 var(--inchiostro); transition:transform .12s, box-shadow .12s;
+}
+.modale .btn-modale:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--inchiostro)}
+.modale .btn-modale.primario{background:var(--rosso); border-color:var(--rosso); color:#fff}
+.modale .m-errore{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--rosso); margin-top:12px; min-height:0}
+.modale .m-nota{font-size:12px; color:var(--inchiostro2); margin-top:14px; line-height:1.5}
+.modale .m-nota a{color:var(--inchiostro)}
+
 /* toast */
 .toast{
   position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px);
@@ -363,6 +409,38 @@ footer a{color:var(--inchiostro)}
   <span>Margherita Index © 2026 — dati aperti, metodo aperto</span>
   <span><a href="https://github.com/Seve1995/margherita-index-site" target="_blank" rel="noopener">dati</a> · <a href="metodologia.html">metodologia</a> · <a href="https://github.com/Seve1995/margherita-index" target="_blank" rel="noopener">pipeline</a></span>
 </footer>
+
+<div class="modale-sfondo" id="modaleSegnala" hidden>
+  <div class="modale" role="dialog" aria-modal="true" aria-labelledby="modaleTitolo">
+    <div class="m-testa">
+      <div>
+        <div class="m-titolo" id="modaleTitolo">Segnala un prezzo</div>
+        <div class="m-sottotitolo">Entra nello stesso ciclo di verifica dei dati dell'indice.</div>
+      </div>
+      <button class="m-chiudi" onclick="chiudiSegnalazione()" aria-label="Chiudi">✕</button>
+    </div>
+    <form id="formSegnalazione" onsubmit="inviaSegnalazione(event)" novalidate>
+      <label for="fCitta">Città</label>
+      <input id="fCitta" list="elencoCitta" placeholder="Es. Milano" autocomplete="off">
+      <datalist id="elencoCitta"></datalist>
+      <label for="fPizzeria">Pizzeria</label>
+      <input id="fPizzeria" placeholder="Nome esatto come appare nell'indice" autocomplete="off">
+      <label for="fPrezzo">Prezzo Margherita (€)</label>
+      <input id="fPrezzo" inputmode="decimal" placeholder="Es. 7,50">
+      <div class="m-aiuto">Se è un trancio o una teglia, scrivilo nelle note.</div>
+      <label for="fMenu">Link al menu (opzionale ma utile)</label>
+      <input id="fMenu" type="url" placeholder="https://…">
+      <label for="fNote">Note</label>
+      <textarea id="fNote" placeholder="Formato (trancio/teglia), dimensioni, data in cui hai visto il prezzo…"></textarea>
+      <div class="m-azioni">
+        <button type="submit" class="btn-modale primario">Apri form GitHub precompilato →</button>
+        <button type="button" class="btn-modale" onclick="chiudiSegnalazione()">Annulla</button>
+      </div>
+      <div class="m-errore" id="mErrore"></div>
+      <p class="m-nota">La segnalazione è <strong>pubblica</strong> sul repository GitHub aperto. In alternativa usa <a href="#" id="linkDirettoGitHub" target="_blank" rel="noopener">direttamente il form GitHub</a>.</p>
+    </form>
+  </div>
+</div>
 
 <div class="toast" id="toast" role="status"></div>
 
@@ -479,7 +557,7 @@ function mostraCitta(citta){
       </div>
     </div>`;
   };
-  const mute=senza.slice(0,5).map(p=>`<div class="voce muta"><div class="sx"><a class="n-pizzeria" href="${'https://maps.google.com/?q='+encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(p.n||'')}</a></div><div class="dx"><a href="${collegaSegnalaUrl(citta)}" target="_blank" rel="noopener" class="mute-cta">conosci il prezzo?</a></div></div>`);
+  const mute=senza.slice(0,5).map(p=>`<div class="voce muta"><div class="sx"><a class="n-pizzeria" href="${'https://maps.google.com/?q='+encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(p.n||'')}</a></div><div class="dx"><a href="#" class="mute-cta" data-citta="${esc(citta)}" data-pizzeria="${esc(p.n||'')}">conosci il prezzo?</a></div></div>`);
 
   $('scontrino').innerHTML=`
     <div class="riga-totale">
@@ -556,13 +634,60 @@ function costruisciMonetizzazione(citta){
   box.innerHTML=html;
 }
 
-let collegaSegnalaUrl = citta => "https://github.com/Seve1995/margherita-index-site/issues/new?template=segnalazione-prezzo.yml&citta="+encodeURIComponent(citta);
+// ── segnalazione: GUI dedicata → form GitHub precompilato ──
+const REPO_SEGNALAZIONE="https://github.com/Seve1995/margherita-index-site/issues/new?template=segnalazione-prezzo.yml";
+function riempiDatalistCitta(){
+  if(!tutteCitta.length)return;
+  $('elencoCitta').innerHTML=tutteCitta.map(c=>`<option value="${esc(c)}">`).join('');
+}
+function apriSegnalazione(citta,pizzeria){
+  riempiDatalistCitta();
+  $('fCitta').value=citta||'';
+  $('fPizzeria').value=pizzeria||'';
+  $('fPrezzo').value=''; $('fMenu').value=''; $('fNote').value='';
+  $('mErrore').textContent='';
+  $('linkDirettoGitHub').href=REPO_SEGNALAZIONE+(citta?'&citta='+encodeURIComponent(citta):'');
+  $('modaleSegnala').hidden=false;
+  (pizzeria?$('fPizzeria'):citta?$('fCitta'):$('fCitta')).focus();
+}
+function chiudiSegnalazione(){$('modaleSegnala').hidden=true;$('mErrore').textContent='';}
+function prezzoValido(v){
+  const n=parseFloat(String(v||'').trim().replace(',','.'));
+  return (!isNaN(n)&&n>=0.30&&n<=99)?n:null;
+}
+function inviaSegnalazione(e){
+  e.preventDefault();
+  const citta=$('fCitta').value.trim();
+  const pizzeria=$('fPizzeria').value.trim();
+  const menu=$('fMenu').value.trim();
+  const note=$('fNote').value.trim();
+  const prezzo=prezzoValido($('fPrezzo').value);
+  const errore=!citta?'Indica la città.'
+    :!pizzeria?'Indica il nome della pizzeria.'
+    :prezzo===null?'Inserisci un prezzo valido (tra 0,30 e 99 €).':'';
+  $('mErrore').textContent=errore;
+  if(errore)return;
+  const q=new URLSearchParams({template:'segnalazione-prezzo.yml',citta,pizzeria});
+  q.set('prezzo',prezzo.toFixed(2).replace('.',','));
+  if(menu)q.set('menu',menu);
+  if(note)q.set('note',note);
+  window.open('https://github.com/Seve1995/margherita-index-site/issues/new?'+q.toString(),'_blank');
+  chiudiSegnalazione();
+  toast('Form GitHub aperto: completa l\'invio lì');
+}
+$('modaleSegnala').addEventListener('click',ev=>{if(ev.target===$('modaleSegnala'))chiudiSegnalazione();});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('modaleSegnala').hidden)chiudiSegnalazione();});
+
 function collegaSegnalazione(citta){
-  const url=collegaSegnalaUrl(citta);
-  ['linkSegnalaCitta','linkSegnalaHome'].forEach(id=>{
-    const el=$(id); if(el){el.href=url;}
+  const home=$('linkSegnalaHome');
+  if(home)home.onclick=ev=>{ev.preventDefault();apriSegnalazione('');};
+  const cittaLink=$('linkSegnalaCitta');
+  if(cittaLink)cittaLink.onclick=ev=>{ev.preventDefault();apriSegnalazione(citta||'');};
+  $('scontrino').querySelectorAll('.mute-cta').forEach(a=>{
+    a.addEventListener('click',ev=>{ev.preventDefault();apriSegnalazione(a.dataset.citta,a.dataset.pizzeria);});
   });
 }
+collegaSegnalazione('');
 
 function vaiHome(e){
   if(e)e.preventDefault();
