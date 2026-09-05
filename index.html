@@ -6,7 +6,7 @@
 <title>Margherita Index — Quanto costa la pizza nella tua citta?</title>
 <meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 5423 pizzerie, 192 città, dati reali verificati. Scopri se la tua città è cara o economica.">
 <meta property="og:title" content="Margherita Index — Quanto costa la pizza nella tua citta?">
-<meta property="og:description" content="Il prezzo medio della Margherita in Italia è 7,55 euro. La tua città è sopra o sotto la media?">
+<meta property="og:description" content="Il prezzo medio della Margherita in Italia è 7,81 euro. La tua città è sopra o sotto la media?">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -315,6 +315,9 @@ button{font-family:inherit}
 .modale .btn-modale:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--inchiostro)}
 .modale .btn-modale.primario{background:var(--rosso); border-color:var(--rosso); color:#fff}
 .modale .m-errore{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--rosso); margin-top:12px; min-height:0}
+.modale .m-esito{display:none; background:rgba(37,107,74,.12); border-left:3px solid var(--verde); padding:10px 12px; margin-top:14px; border-radius:6px; font-size:14px; line-height:1.5}
+.modale .m-esito a{color:var(--inchiostro); font-weight:600}
+.trappola{position:absolute; left:-9999px; top:0; width:1px; height:1px; opacity:0; pointer-events:none}
 .modale .m-nota{font-size:12px; color:var(--inchiostro2); margin-top:14px; line-height:1.5}
 .modale .m-nota a{color:var(--inchiostro)}
 
@@ -353,7 +356,7 @@ footer a{color:var(--inchiostro)}
   <h1 class="cifra"><sup>€</sup><span id="mediaNazionale">7.64</span></h1>
   <p class="variazione">
     Costa così, in media, una pizza <span class="titolo-serif sottolinea">Margherita</span> intera<br>
-    nelle <strong id="nCitta">…</strong> capoluoghi di provincia italiani.
+    in <strong id="nCitta">…</strong> città italiane.
     <span id="coperturaLinea"></span>
   </p>
 
@@ -372,7 +375,7 @@ footer a{color:var(--inchiostro)}
 
 <div id="contenutoHome">
   <div class="blocchi">
-    <div class="intesta-blocco"><h2>Classifica capoluoghi</h2><span class="etichetta">Margherita intera · media città</span></div>
+    <div class="intesta-blocco"><h2>Classifica città</h2><span class="etichetta">Margherita intera · media città</span></div>
     <div class="griglia-classifica">
       <div class="classifica economiche">
         <h3><span>Più economiche</span><span class="pallino" aria-hidden="true"></span></h3>
@@ -420,6 +423,7 @@ footer a{color:var(--inchiostro)}
       <button class="m-chiudi" onclick="chiudiSegnalazione()" aria-label="Chiudi">✕</button>
     </div>
     <form id="formSegnalazione" onsubmit="inviaSegnalazione(event)" novalidate>
+      <div class="trappola" aria-hidden="true"><label>Non compilare questo campo<input type="text" id="fTrappola" tabindex="-1" autocomplete="off"></label></div>
       <label for="fCitta">Città</label>
       <input id="fCitta" list="elencoCitta" placeholder="Es. Milano" autocomplete="off">
       <datalist id="elencoCitta"></datalist>
@@ -433,11 +437,12 @@ footer a{color:var(--inchiostro)}
       <label for="fNote">Note</label>
       <textarea id="fNote" placeholder="Formato (trancio/teglia), dimensioni, data in cui hai visto il prezzo…"></textarea>
       <div class="m-azioni">
-        <button type="submit" class="btn-modale primario">Apri form GitHub precompilato →</button>
+        <button type="submit" id="btnInviaSegnalazione" class="btn-modale primario">Apri form GitHub precompilato →</button>
         <button type="button" class="btn-modale" onclick="chiudiSegnalazione()">Annulla</button>
       </div>
       <div class="m-errore" id="mErrore"></div>
-      <p class="m-nota">La segnalazione è <strong>pubblica</strong> sul repository GitHub aperto. In alternativa usa <a href="#" id="linkDirettoGitHub" target="_blank" rel="noopener">direttamente il form GitHub</a>.</p>
+      <div class="m-esito" id="mEsito"></div>
+      <p class="m-nota">La segnalazione entra nel ciclo di verifica dell'indice ed è <strong>pubblica</strong> sul repository GitHub aperto. In alternativa usa <a href="#" id="linkDirettoGitHub" target="_blank" rel="noopener">direttamente il form GitHub</a>.</p>
     </form>
   </div>
 </div>
@@ -445,12 +450,13 @@ footer a{color:var(--inchiostro)}
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-let DATI=null, tutteCitta=[], cittaCorrente=null, MEDIA_NAZ=7.64;
-let AFFILIAZIONI=null, SPONSOR=null;
+let DATI=null, tutteCitta=[], cittaCorrente=null, MEDIA_NAZ=7.81;
+let AFFILIAZIONI=null, SPONSOR=null, SEGNALAZIONI_ENDPOINT='';
 const $=id=>document.getElementById(id);
 
 fetch('affiliazioni.json?v='+Date.now()).then(r=>r.json()).then(d=>{AFFILIAZIONI=d; if(cittaCorrente)costruisciMonetizzazione(cittaCorrente);}).catch(()=>{});
 fetch('sponsorizzati.json?v='+Date.now()).then(r=>r.json()).then(d=>{SPONSOR=d; if(cittaCorrente)costruisciMonetizzazione(cittaCorrente);}).catch(()=>{});
+fetch('site_config.json?v='+Date.now()).then(r=>r.json()).then(d=>{SEGNALAZIONI_ENDPOINT=(d&&d.segnalazioni_endpoint)||''; aggiornaPulsanteSegnalazione();}).catch(()=>{});
 
 fetch('app_data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
   DATI=d;
@@ -462,22 +468,22 @@ fetch('app_data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
 }).catch(()=>{ $('mediaNazionale').textContent='—'; });
 
 function costruisciStatistiche(){
-  const reali=tutteCitta.filter(c=>DATI[c].t>=10);
   let totT=0,totC=0;
-  reali.forEach(c=>{totT+=DATI[c].t||0; totC+=(DATI[c].cs||DATI[c].c||0);});
+  tutteCitta.forEach(c=>{totT+=DATI[c].t||0; totC+=(DATI[c].cs||0);});
   $('nCitta').textContent=tutteCitta.length;
   $('nPizzerie').textContent=totT.toLocaleString('it');
   $('nPrezzi').textContent=totC.toLocaleString('it');
   $('nCopertura').textContent=(totT?Math.round(totC/totT*100):0)+'%';
   let somma=0,cnt=0;
-  reali.forEach(c=>{const d=DATI[c]; if(d.avg&&d.cs){somma+=d.avg*d.cs; cnt+=d.cs;}});
+  tutteCitta.forEach(c=>{const d=DATI[c]; if(d.avg&&d.cs){somma+=d.avg*d.cs; cnt+=d.cs;}});
   if(cnt)MEDIA_NAZ=somma/cnt;
   $('mediaNazionale').textContent=MEDIA_NAZ.toFixed(2).replace('.',',');
-  $('coperturaLinea').textContent=`Copertura raccolta: ${Math.round(totC/Math.max(1,totT)*100)}%.`;
+  const conMedia=tutteCitta.filter(c=>DATI[c].avg).length;
+  $('coperturaLinea').textContent=`${conMedia} città con prezzo medio · ${tutteCitta.length-conMedia} in attesa di una segnalazione.`;
 }
 
 function costruisciClassifiche(){
-  const citta=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||DATI[c].c||0)>=3);
+  const citta=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||0)>=3);
   const ordinate=[...citta].sort((a,b)=>DATI[a].avg-DATI[b].avg);
   const eco=ordinate.slice(0,8), care=[...ordinate].slice(-8).reverse();
   $('listaEconomiche').innerHTML=eco.map((c,i)=>`
@@ -524,7 +530,7 @@ function mostraCitta(citta){
   cercaEl.value='';
   document.querySelector('.indice').style.display='none';
   const d=DATI[citta];
-  const ordinate=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||DATI[c].c||0)>=3).sort((a,b)=>DATI[a].avg-DATI[b].avg);
+  const ordinate=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||0)>=3).sort((a,b)=>DATI[a].avg-DATI[b].avg);
   const pos=ordinate.indexOf(citta)+1, quante=ordinate.length;
   const diff=d.avg?d.avg-MEDIA_NAZ:0;
   const diffTxt=d.avg?(diff>=0?'+':'−')+'€'+Math.abs(diff).toFixed(2).replace('.',',')+' vs media nazionale':'';
@@ -565,7 +571,7 @@ function mostraCitta(citta){
       <span class="tot-valore">${d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—'}</span>
     </div>
     <div class="pos-linea">
-      #${pos} su ${quante} capoluoghi${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}
+      #${pos} su ${quante} città con prezzo medio${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}
     </div>
     <div class="mini-stats">
       <span>pizzerie: <b>${d.t||0}</b></span>
@@ -644,16 +650,35 @@ function apriSegnalazione(citta,pizzeria){
   riempiDatalistCitta();
   $('fCitta').value=citta||'';
   $('fPizzeria').value=pizzeria||'';
-  $('fPrezzo').value=''; $('fMenu').value=''; $('fNote').value='';
+  $('fPrezzo').value=''; $('fMenu').value=''; $('fNote').value=''; $('fTrappola').value='';
   $('mErrore').textContent='';
+  $('mEsito').style.display='none'; $('mEsito').innerHTML='';
+  aggiornaPulsanteSegnalazione();
+  const btn=$('btnInviaSegnalazione'); btn.disabled=false;
   $('linkDirettoGitHub').href=REPO_SEGNALAZIONE+(citta?'&citta='+encodeURIComponent(citta):'');
   $('modaleSegnala').hidden=false;
   (pizzeria?$('fPizzeria'):citta?$('fCitta'):$('fCitta')).focus();
 }
-function chiudiSegnalazione(){$('modaleSegnala').hidden=true;$('mErrore').textContent='';}
+function chiudiSegnalazione(){$('modaleSegnala').hidden=true;$('mErrore').textContent='';$('mEsito').style.display='none';}
 function prezzoValido(v){
   const n=parseFloat(String(v||'').trim().replace(',','.'));
   return (!isNaN(n)&&n>=0.30&&n<=99)?n:null;
+}
+function aggiornaPulsanteSegnalazione(){
+  if($('btnInviaSegnalazione'))
+    $('btnInviaSegnalazione').textContent=SEGNALAZIONI_ENDPOINT?'Invia segnalazione':'Apri form GitHub precompilato →';
+}
+function urlGitHubSegnalazione(){
+  const citta=$('fCitta').value.trim();
+  const pizzeria=$('fPizzeria').value.trim();
+  const menu=$('fMenu').value.trim();
+  const note=$('fNote').value.trim();
+  const prezzo=prezzoValido($('fPrezzo').value);
+  const q=new URLSearchParams({template:'segnalazione-prezzo.yml',citta,pizzeria});
+  q.set('prezzo',prezzo?prezzo.toFixed(2).replace('.',','):'');
+  if(menu)q.set('menu',menu);
+  if(note)q.set('note',note);
+  return 'https://github.com/Seve1995/margherita-index-site/issues/new?'+q.toString();
 }
 function inviaSegnalazione(e){
   e.preventDefault();
@@ -667,13 +692,40 @@ function inviaSegnalazione(e){
     :prezzo===null?'Inserisci un prezzo valido (tra 0,30 e 99 €).':'';
   $('mErrore').textContent=errore;
   if(errore)return;
-  const q=new URLSearchParams({template:'segnalazione-prezzo.yml',citta,pizzeria});
-  q.set('prezzo',prezzo.toFixed(2).replace('.',','));
-  if(menu)q.set('menu',menu);
-  if(note)q.set('note',note);
-  window.open('https://github.com/Seve1995/margherita-index-site/issues/new?'+q.toString(),'_blank');
-  chiudiSegnalazione();
-  toast('Form GitHub aperto: completa l\'invio lì');
+  if(!SEGNALAZIONI_ENDPOINT){
+    window.open(urlGitHubSegnalazione(),'_blank');
+    chiudiSegnalazione();
+    toast('Form GitHub aperto: completa l\'invio lì');
+    return;
+  }
+  const btn=$('btnInviaSegnalazione'), old=btn.textContent;
+  btn.disabled=true; btn.textContent='Invio in corso…';
+  fetch(SEGNALAZIONI_ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({citta,pizzeria,prezzo:prezzo.toFixed(2).replace('.',','),menu,note,campo_trappola:$('fTrappola').value})
+  })
+  .then(r=>r.json().catch(()=>({ok:false,error:'Risposta non valida dal server.'})))
+  .then(res=>{
+    if(res&&res.ok&&res.url){
+      $('mEsito').innerHTML=`Segnalazione inviata! Seguila su <a href="${esc(res.url)}" target="_blank" rel="noopener">GitHub ${res.number?'#'+esc(String(res.number))+' ':''}↗</a>`;
+      $('mEsito').style.display='block';
+      btn.textContent='Inviata ✓';
+      $('fPrezzo').value=''; $('fMenu').value=''; $('fNote').value='';
+    }else{
+      btn.disabled=false; btn.textContent=old;
+      const msg=(res&&res.error)?res.error:'Invio non riuscito.';
+      window.open(urlGitHubSegnalazione(),'_blank');
+      chiudiSegnalazione();
+      toast('Segnalazione: '+msg+' Aperto il form GitHub come ripiego');
+    }
+  })
+  .catch(()=>{
+    btn.disabled=false; btn.textContent=old;
+    window.open(urlGitHubSegnalazione(),'_blank');
+    chiudiSegnalazione();
+    toast('Server non raggiungibile: aperto il form GitHub');
+  });
 }
 $('modaleSegnala').addEventListener('click',ev=>{if(ev.target===$('modaleSegnala'))chiudiSegnalazione();});
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('modaleSegnala').hidden)chiudiSegnalazione();});

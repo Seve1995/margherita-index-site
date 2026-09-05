@@ -1,0 +1,4 @@
+{
+  "segnalazioni_endpoint": "",
+  "_note": "Endpoint per l'invio diretto delle segnalazioni senza redirect a GitHub. Vuoto = fallback sul form GitHub precompilato. Es. https://segnalazioni.margherita-index.workers.dev"
+}
