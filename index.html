@@ -557,6 +557,7 @@ cercaEl.addEventListener('keydown',e=>{if(e.key==='Escape')sugEl.style.display='
 function mostraCitta(citta){
   if(!INDICE||!INDICE[citta])return;
   cittaCorrente=citta;
+  espandiMute=false;
   sugEl.style.display='none';
   cercaEl.value='';
   document.querySelector('.indice').style.display='none';
