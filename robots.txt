@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://margherita-index.it/sitemap.xml
