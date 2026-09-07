@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Margherita Index — Quanto costa la pizza nella tua citta?</title>
-<meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 5423 pizzerie, 192 città, dati reali verificati. Scopri se la tua città è cara o economica.">
+<meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 17.783 pizzerie, 1.736 città, dati reali verificati. Scopri se la tua città è cara o economica.">
 <meta property="og:title" content="Margherita Index — Quanto costa la pizza nella tua citta?">
 <meta property="og:description" content="Il prezzo medio della Margherita in Italia è 7,81 euro. La tua città è sopra o sotto la media?">
 <meta property="og:type" content="website">
@@ -353,7 +353,7 @@ footer a{color:var(--inchiostro)}
 
 <section class="indice">
   <span class="etichetta">Indice nazionale · aggiornamento mensile · solo menu verificati</span>
-  <h1 class="cifra"><sup>€</sup><span id="mediaNazionale">7.64</span></h1>
+  <h1 class="cifra"><sup>€</sup><span id="mediaNazionale">7,81</span></h1>
   <p class="variazione">
     Costa così, in media, una pizza <span class="titolo-serif sottolinea">Margherita</span> intera<br>
     in <strong id="nCitta">…</strong> città italiane.
@@ -450,7 +450,7 @@ footer a{color:var(--inchiostro)}
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-let DATI=null, tutteCitta=[], cittaCorrente=null, MEDIA_NAZ=7.81;
+let INDICE=null, DETTAGLI={}, tutteCitta=[], cittaCorrente=null, MEDIA_NAZ=7.81;
 let AFFILIAZIONI=null, SPONSOR=null, SEGNALAZIONI_ENDPOINT='';
 const $=id=>document.getElementById(id);
 
@@ -458,45 +458,53 @@ fetch('affiliazioni.json?v='+Date.now()).then(r=>r.json()).then(d=>{AFFILIAZIONI
 fetch('sponsorizzati.json?v='+Date.now()).then(r=>r.json()).then(d=>{SPONSOR=d; if(cittaCorrente)costruisciMonetizzazione(cittaCorrente);}).catch(()=>{});
 fetch('site_config.json?v='+Date.now()).then(r=>r.json()).then(d=>{SEGNALAZIONI_ENDPOINT=(d&&d.segnalazioni_endpoint)||''; aggiornaPulsanteSegnalazione();}).catch(()=>{});
 
-fetch('app_data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
-  DATI=d;
-  tutteCitta=Object.keys(DATI).sort();
+fetch('citta_index.json?v='+Date.now()).then(r=>r.json()).then(d=>{
+  INDICE=(d&&d.citta)||{};
+  tutteCitta=Object.keys(INDICE).sort();
   costruisciStatistiche();
   costruisciClassifiche();
   const q=new URLSearchParams(location.search).get('city');
-  if(q&&DATI[q])mostraCitta(q);
+  if(q&&INDICE[q])mostraCitta(q);
 }).catch(()=>{ $('mediaNazionale').textContent='—'; });
 
 function costruisciStatistiche(){
   let totT=0,totC=0;
-  tutteCitta.forEach(c=>{totT+=DATI[c].t||0; totC+=(DATI[c].cs||0);});
+  tutteCitta.forEach(c=>{const d=INDICE[c]; totT+=d.t||0; totC+=(d.cs||0);});
   $('nCitta').textContent=tutteCitta.length;
   $('nPizzerie').textContent=totT.toLocaleString('it');
   $('nPrezzi').textContent=totC.toLocaleString('it');
   $('nCopertura').textContent=(totT?Math.round(totC/totT*100):0)+'%';
   let somma=0,cnt=0;
-  tutteCitta.forEach(c=>{const d=DATI[c]; if(d.avg&&d.cs){somma+=d.avg*d.cs; cnt+=d.cs;}});
+  tutteCitta.forEach(c=>{const d=INDICE[c]; if(d.avg&&d.cs){somma+=d.avg*d.cs; cnt+=d.cs;}});
   if(cnt)MEDIA_NAZ=somma/cnt;
   $('mediaNazionale').textContent=MEDIA_NAZ.toFixed(2).replace('.',',');
-  const conMedia=tutteCitta.filter(c=>DATI[c].avg).length;
+  const conMedia=tutteCitta.filter(c=>INDICE[c].avg).length;
   $('coperturaLinea').textContent=`${conMedia} città con prezzo medio · ${tutteCitta.length-conMedia} in attesa di una segnalazione.`;
+  if(cnt){
+    const mediaTesto=MEDIA_NAZ.toFixed(2).replace('.',',');
+    const desc=`Il prezzo della pizza Margherita in ogni città italiana. ${totT.toLocaleString('it')} pizzerie, ${tutteCitta.length} città, media nazionale €${mediaTesto}. Scopri se la tua città è cara o economica.`;
+    const dm=document.querySelector('meta[name="description"]');
+    const dom=document.querySelector('meta[property="og:description"]');
+    if(dm)dm.setAttribute('content',desc);
+    if(dom)dom.setAttribute('content',desc);
+  }
 }
 
 function costruisciClassifiche(){
-  const citta=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||0)>=3);
-  const ordinate=[...citta].sort((a,b)=>DATI[a].avg-DATI[b].avg);
+  const citta=tutteCitta.filter(c=>INDICE[c].avg&&(INDICE[c].cs||0)>=3);
+  const ordinate=[...citta].sort((a,b)=>INDICE[a].avg-INDICE[b].avg);
   const eco=ordinate.slice(0,8), care=[...ordinate].slice(-8).reverse();
   $('listaEconomiche').innerHTML=eco.map((c,i)=>`
     <div class="riga-citta" data-citta="${esc(c)}" role="button" tabindex="0">
       <span class="pos">${String(i+1).padStart(2,'0')}</span>
       <span class="nome-citta">${esc(c)}</span>
-      <span class="prezzo-citta prezzo-basso">€${DATI[c].avg.toFixed(2).replace('.',',')}</span>
+      <span class="prezzo-citta prezzo-basso">€${INDICE[c].avg.toFixed(2).replace('.',',')}</span>
     </div>`).join('');
   $('listaCare').innerHTML=care.map((c,i)=>`
     <div class="riga-citta" data-citta="${esc(c)}" role="button" tabindex="0">
       <span class="pos">${String(i+1).padStart(2,'0')}</span>
       <span class="nome-citta">${esc(c)}</span>
-      <span class="prezzo-citta prezzo-alto">€${DATI[c].avg.toFixed(2).replace('.',',')}</span>
+      <span class="prezzo-citta prezzo-alto">€${INDICE[c].avg.toFixed(2).replace('.',',')}</span>
     </div>`).join('');
   document.querySelectorAll('.riga-citta').forEach(el=>{
     el.addEventListener('click',()=>mostraCitta(el.dataset.citta));
@@ -508,11 +516,11 @@ function costruisciClassifiche(){
 const cercaEl=$('cerca'), sugEl=$('suggerimenti');
 cercaEl.addEventListener('input',()=>{
   const q=cercaEl.value.toLowerCase().trim();
-  if(!q||!DATI){sugEl.style.display='none';return;}
+  if(!q||!INDICE){sugEl.style.display='none';return;}
   const m=tutteCitta.filter(c=>c.toLowerCase().includes(q)).slice(0,7);
   if(!m.length){sugEl.style.display='none';return;}
   sugEl.innerHTML=m.map(c=>{
-    const d=DATI[c];
+    const d=INDICE[c];
     const media=d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—';
     const cov=d.t?Math.round((d.c||0)/d.t*100)+'%':'';
     return `<div class="suggerimento" data-citta="${esc(c)}"><span class="nome">${esc(c)}</span><span class="meta">${media} · cov. ${cov}</span></div>`;
@@ -524,23 +532,46 @@ document.addEventListener('click',e=>{if(!cercaEl.contains(e.target))sugEl.style
 cercaEl.addEventListener('keydown',e=>{if(e.key==='Escape')sugEl.style.display='none';});
 
 function mostraCitta(citta){
-  if(!DATI||!DATI[citta])return;
+  if(!INDICE||!INDICE[citta])return;
   cittaCorrente=citta;
   sugEl.style.display='none';
   cercaEl.value='';
   document.querySelector('.indice').style.display='none';
-  const d=DATI[citta];
-  const ordinate=tutteCitta.filter(c=>DATI[c].avg&&(DATI[c].cs||0)>=3).sort((a,b)=>DATI[a].avg-DATI[b].avg);
-  const pos=ordinate.indexOf(citta)+1, quante=ordinate.length;
-  const diff=d.avg?d.avg-MEDIA_NAZ:0;
-  const diffTxt=d.avg?(diff>=0?'+':'−')+'€'+Math.abs(diff).toFixed(2).replace('.',',')+' vs media nazionale':'';
-  const pct=d.avg?Math.min(100,Math.max(5,d.avg/15*100)):50;
-  const cs=d.cs||d.c||0;
-  const fascia=!d.avg?'':(pos<=Math.ceil(quante*.2)?'tra le più economiche':pos>=quante-Math.ceil(quante*.2)+1?'tra le più care':'nella media');
+  $('contenutoHome').style.display='none';
+  $('vistaCitta').style.display='block';
+  history.pushState(null,'','?city='+encodeURIComponent(citta));
+  renderizzaScontrino(citta);
+  caricaDettagli(citta);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-  const std=(d.p||[]).filter(p=>p.p&&p.f==='standard').sort((a,b)=>a.p-b.p);
-  const nonStd=(d.p||[]).filter(p=>p.p&&p.f!=='standard').sort((a,b)=>a.p-b.p);
-  const senza=(d.p||[]).filter(p=>!p.p);
+function caricaDettagli(citta){
+  if(DETTAGLI[citta]!==undefined){costruisciMonetizzazione(citta);return;}
+  const slug=(INDICE[citta].slug||slugCitta(citta));
+  fetch('citta/'+slug+'.json?v='+Date.now())
+    .then(r=>r.json())
+    .then(dd=>{ DETTAGLI[citta]=dd; renderizzaScontrino(citta); costruisciMonetizzazione(citta); })
+    .catch(()=>{ DETTAGLI[citta]=null; renderizzaScontrino(citta); costruisciMonetizzazione(citta); });
+}
+
+function renderizzaScontrino(citta){
+  const idx=INDICE[citta];
+  const d=DETTAGLI[citta];
+  const ordinate=tutteCitta.filter(c=>INDICE[c].avg&&(INDICE[c].cs||0)>=3).sort((a,b)=>INDICE[a].avg-INDICE[b].avg);
+  const pos=ordinate.indexOf(citta)+1, quante=ordinate.length;
+  const diff=idx.avg?idx.avg-MEDIA_NAZ:0;
+  const diffTxt=idx.avg?(diff>=0?'+':'−')+'€'+Math.abs(diff).toFixed(2).replace('.',',')+' vs media nazionale':'';
+  const pct=idx.avg?Math.min(100,Math.max(5,idx.avg/15*100)):50;
+  const cs=idx.cs||idx.c||0;
+  const fascia=!idx.avg?'':(pos<=Math.ceil(quante*.2)?'tra le più economiche':pos>=quante-Math.ceil(quante*.2)+1?'tra le più care':'nella media');
+  const lineaPos=idx.avg
+    ?`#${pos} su ${quante} città con prezzo medio${fascia?' · '+fascia:''}${diff?' · '+diffTxt:''}`
+    :'città censita · in attesa del primo prezzo verificato';
+
+  const lista=d?(d.p||[]):null;
+  const std=(lista||[]).filter(p=>p.p&&p.f==='standard').sort((a,b)=>a.p-b.p);
+  const nonStd=(lista||[]).filter(p=>p.p&&p.f!=='standard').sort((a,b)=>a.p-b.p);
+  const senza=(lista||[]).filter(p=>!p.p);
 
   const voce=p=>{
     const maps=p.m?p.m:`https://maps.google.com/?q=${encodeURIComponent((p.n||'')+'+'+(p.a||''))}`;
@@ -564,24 +595,27 @@ function mostraCitta(citta){
     </div>`;
   };
   const mute=senza.slice(0,5).map(p=>`<div class="voce muta"><div class="sx"><a class="n-pizzeria" href="${'https://maps.google.com/?q='+encodeURIComponent((p.n||'')+'+'+(p.a||''))}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(p.n||'')}</a></div><div class="dx"><a href="#" class="mute-cta" data-citta="${esc(citta)}" data-pizzeria="${esc(p.n||'')}">conosci il prezzo?</a></div></div>`);
+  const corpo=d===null
+    ?'<div style="padding:16px 0;font-size:12px;color:#888">Dettagli non disponibili. <a href="#" class="mute-cta" onclick="caricaDettagli(\''+esc(citta).replace(/'/g,"\\'")+'\')">Riprova</a></div>'
+    :d===undefined
+      ?'<div style="padding:16px 0;font-size:12px;color:#888">Caricamento pizzerie…</div>'
+      :`${std.map(voce).join('')}${nonStd.map(voce).join('')}${mute.join('')}`;
 
   $('scontrino').innerHTML=`
     <div class="riga-totale">
       <span class="tot-label">Margherita · media ${esc(citta)}</span>
-      <span class="tot-valore">${d.avg?'€'+d.avg.toFixed(2).replace('.',','):'—'}</span>
+      <span class="tot-valore">${idx.avg?'€'+idx.avg.toFixed(2).replace('.',','):'—'}</span>
     </div>
     <div class="pos-linea">
-      #${pos} su ${quante} città con prezzo medio${fascia?' · '+fascia:''}${d.avg?' · '+diffTxt:''}
+      ${lineaPos}
     </div>
     <div class="mini-stats">
-      <span>pizzerie: <b>${d.t||0}</b></span>
+      <span>pizzerie: <b>${idx.t||0}</b></span>
       <span>prezzi intera: <b>${cs}</b></span>
-      <span>min: <b>${d.min?'€'+d.min.toFixed(2).replace('.',','):'—'}</b></span>
-      <span>max: <b>${d.max?'€'+d.max.toFixed(2).replace('.',','):'—'}</b></span>
+      <span>min: <b>${idx.min?'€'+idx.min.toFixed(2).replace('.',','):'—'}</b></span>
+      <span>max: <b>${idx.max?'€'+idx.max.toFixed(2).replace('.',','):'—'}</b></span>
     </div>
-    ${std.map(voce).join('')}
-    ${nonStd.map(voce).join('')}
-    ${mute.join('')}
+    ${corpo}
     <div style="text-align:right;font-size:9px;color:#999;margin-top:10px">valutazioni © Google</div>
     <div class="codice-barre" aria-hidden="true"></div>
     <div class="codice-testo">MARGHERITA·INDEX·${esc(citta.toUpperCase())}</div>
@@ -591,10 +625,6 @@ function mostraCitta(citta){
     </div>`;
   collegaSegnalazione(citta);
   costruisciMonetizzazione(citta);
-  $('contenutoHome').style.display='none';
-  $('vistaCitta').style.display='block';
-  history.pushState(null,'','?city='+encodeURIComponent(citta));
-  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function slugCitta(c){
@@ -607,7 +637,8 @@ function costruisciMonetizzazione(citta){
   let html='';
   const spons=((SPONSOR||{}).sponsorizzate||{})[citta]||[];
   for(const s of spons.slice(0,1)){
-    const voce=(DATI[citta]&&DATI[citta].p||[]).find(p=>(p.n||'').toLowerCase()===(s.nome||'').toLowerCase());
+    const dettaglio=DETTAGLI[citta];
+    const voce=dettaglio&&(dettaglio.p||[]).find(p=>(p.n||'').toLowerCase()===(s.nome||'').toLowerCase());
     const prezzo=voce&&voce.p?`Margherita €${voce.p.toFixed(2).replace('.',',')} — verificata dall'indice`:'';
     html+=`<div class="sponsor-box">
       <span class="etichetta">In evidenza · sponsorizzato</span>
@@ -755,8 +786,8 @@ function vaiHome(e){
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 
 function testoCondivisione(){
-  if(!cittaCorrente||!DATI[cittaCorrente])return '';
-  const d=DATI[cittaCorrente];
+  if(!cittaCorrente||!INDICE||!INDICE[cittaCorrente])return '';
+  const d=INDICE[cittaCorrente];
   return `A ${cittaCorrente} la Margherita media costa €${d.avg?d.avg.toFixed(2).replace('.',','):'?'}\nScopri la tua città ↓`;
 }
 function condividiNativo(){
@@ -773,7 +804,7 @@ function toast(msg){
 }
 window.addEventListener('popstate',()=>{
   const q=new URLSearchParams(location.search).get('city');
-  if(q&&DATI&&DATI[q])mostraCitta(q); else vaiHome();
+  if(q&&INDICE&&INDICE[q])mostraCitta(q); else vaiHome();
 });
 function cambiaTema(){
   const html=document.documentElement;
