@@ -482,7 +482,7 @@ function costruisciStatistiche(){
   $('coperturaLinea').textContent=`${conMedia} città con prezzo medio · ${tutteCitta.length-conMedia} in attesa di una segnalazione.`;
   if(cnt){
     const mediaTesto=MEDIA_NAZ.toFixed(2).replace('.',',');
-    const desc=`Il prezzo della pizza Margherita in ogni città italiana. ${totT.toLocaleString('it')} pizzerie, ${tutteCitta.length} città, media nazionale €${mediaTesto}. Scopri se la tua città è cara o economica.`;
+    const desc=`Il prezzo della pizza Margherita in ogni città italiana. ${totT.toLocaleString('it')} pizzerie, ${tutteCitta.length.toLocaleString('it')} città, media nazionale €${mediaTesto}. Scopri se la tua città è cara o economica.`;
     const dm=document.querySelector('meta[name="description"]');
     const dom=document.querySelector('meta[property="og:description"]');
     if(dm)dm.setAttribute('content',desc);
