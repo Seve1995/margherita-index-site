@@ -504,8 +504,15 @@ function costruisciStatistiche(){
   }
 }
 
+function inClassifica(c){
+  const d=INDICE[c];
+  if(!d||!d.avg||!d.cs)return false;
+  const t=d.t||0;
+  const soglia=Math.max(3,t?Math.round(t*.2):3);
+  return d.cs>=soglia;
+}
 function costruisciClassifiche(){
-  const citta=tutteCitta.filter(c=>INDICE[c].avg&&(INDICE[c].cs||0)>=3);
+  const citta=tutteCitta.filter(c=>inClassifica(c));
   const ordinate=[...citta].sort((a,b)=>INDICE[a].avg-INDICE[b].avg);
   const eco=ordinate.slice(0,8), care=[...ordinate].slice(-8).reverse();
   $('listaEconomiche').innerHTML=eco.map((c,i)=>`
@@ -572,7 +579,7 @@ function renderizzaScontrino(citta){
   const idx=INDICE[citta];
   const d=DETTAGLI[citta];
   annotaJsonLd(citta,idx);
-  const ordinate=tutteCitta.filter(c=>INDICE[c].avg&&(INDICE[c].cs||0)>=3).sort((a,b)=>INDICE[a].avg-INDICE[b].avg);
+  const ordinate=tutteCitta.filter(c=>inClassifica(c)).sort((a,b)=>INDICE[a].avg-INDICE[b].avg);
   const pos=ordinate.indexOf(citta)+1, quante=ordinate.length;
   const diff=idx.avg?idx.avg-MEDIA_NAZ:0;
   const diffTxt=idx.avg?(diff>=0?'+':'−')+'€'+Math.abs(diff).toFixed(2).replace('.',',')+' vs media nazionale':'';
@@ -580,7 +587,9 @@ function renderizzaScontrino(citta){
   const cs=idx.cs||idx.c||0;
   const fascia=!idx.avg?'':(pos<=Math.ceil(quante*.2)?'tra le più economiche':pos>=quante-Math.ceil(quante*.2)+1?'tra le più care':'nella media');
   const lineaPos=idx.avg
-    ?`#${pos} su ${quante} città con prezzo medio${fascia?' · '+fascia:''}${diff?' · '+diffTxt:''}`
+    ?(pos>0
+      ?`#${pos} su ${quante} città con prezzo medio${fascia?' · '+fascia:''}${diff?' · '+diffTxt:''}`
+      :`media verificata · ${(idx.cs||0)} prezzi, ancora sotto la soglia della classifica${diff?' · '+diffTxt:''}`)
     :`città censita · ${(idx.t||0)>0?idx.t.toLocaleString('it')+' pizzerie rilevate, nessun prezzo verificato ancora':'nessun dato ancora'}`;
 
   const lista=d?(d.p||[]):null;
