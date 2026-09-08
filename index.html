@@ -21,7 +21,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 <style>
 /* ── token ─────────────────────────────────────────── */
 :root{
@@ -55,7 +56,7 @@
 html{scroll-behavior:smooth}
 body{
   background:var(--carta); color:var(--inchiostro);
-  font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  font-family:"General Sans","Segoe UI",system-ui,sans-serif;
   min-height:100vh; overflow-x:hidden;
   transition:background .25s,color .25s;
 }
@@ -75,7 +76,7 @@ button{font-family:inherit}
   background:var(--carta); border-bottom:1px solid var(--linea);
 }
 .marchio{display:flex; align-items:baseline; gap:8px; text-decoration:none; color:inherit}
-.marchio b{font-weight:800; font-size:17px; letter-spacing:-.02em}
+.marchio b{font-family:"Clash Display","General Sans",system-ui,sans-serif; font-weight:600; font-size:18px; letter-spacing:-.01em}
 .marchio em{font-family:"Instrument Serif",serif; font-style:italic; font-size:17px; color:var(--rosso)}
 .azioni{display:flex; gap:8px}
 .azioni a,.azioni button{
@@ -92,7 +93,8 @@ button{font-family:inherit}
 .indice{max-width:1060px; margin:0 auto; padding:64px 22px 40px; position:relative}
 .indice .etichetta{display:block; margin-bottom:14px}
 .cifra{
-  font-weight:800; letter-spacing:-.04em; line-height:.94;
+  font-family:"Clash Display","General Sans",system-ui,sans-serif;
+  font-weight:600; letter-spacing:-.03em; line-height:.94;
   font-size:clamp(72px,16vw,190px); color:var(--inchiostro);
 }
 .cifra sup{font-size:.32em; vertical-align:super; letter-spacing:0; margin-right:.06em}
@@ -114,7 +116,7 @@ button{font-family:inherit}
 /* ricerca */
 .cerca{max-width:520px; margin:44px 0 0; position:relative; z-index:20}
 .cerca input{
-  width:100%; padding:16px 18px; font:500 17px "Bricolage Grotesque",sans-serif;
+  width:100%; padding:16px 18px; font:500 17px "General Sans",sans-serif;
   background:var(--carta2); color:var(--inchiostro);
   border:1.5px solid var(--linea); border-radius:0;
   outline:none; transition:border-color .15s;
@@ -209,7 +211,7 @@ button{font-family:inherit}
   margin:6px 0 14px; padding:10px 0; border-top:1px dashed #999; border-bottom:2px solid #1c1d21;
 }
 .scontrino .tot-label{font-size:12px; text-transform:uppercase; letter-spacing:.1em}
-.scontrino .tot-valore{font-size:34px; font-weight:600; letter-spacing:-.02em}
+.scontrino .tot-valore{font-family:"Clash Display","General Sans",system-ui,sans-serif; font-size:36px; font-weight:600; letter-spacing:-.02em}
 .scontrino .pos-linea{font-size:11.5px; color:#555; margin-bottom:14px}
 .scontrino .mini-stats{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:11px; color:#444; margin-bottom:14px}
 .trend-hero{margin:14px 0 6px; padding:12px 12px 9px; background:rgba(201,47,39,.045); border:1px solid rgba(201,47,39,.16); border-radius:10px}
@@ -321,7 +323,7 @@ button{font-family:inherit}
   letter-spacing:.1em; text-transform:uppercase; color:var(--inchiostro2); margin:14px 0 6px;
 }
 .modale input,.modale textarea{
-  width:100%; padding:11px 12px; font:500 15px "Bricolage Grotesque",sans-serif;
+  width:100%; padding:11px 12px; font:500 15px "General Sans",sans-serif;
   background:var(--carta2); color:var(--inchiostro); border:1.5px solid var(--linea);
   border-radius:0; outline:none;
 }

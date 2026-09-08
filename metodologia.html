@@ -7,7 +7,8 @@
 <meta name="description" content="Come raccogliamo e verifichiamo i prezzi della pizza Margherita: fonti pubbliche ufficiali, doppia verifica automatica e umana, correzioni aperte a tutti.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 <style>
 :root{
   --carta:#efece4; --carta2:#e7e3d7;
@@ -27,7 +28,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{
   background:var(--carta); color:var(--inchiostro);
-  font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  font-family:"General Sans","Segoe UI",system-ui,sans-serif;
   transition:background .25s,color .25s;
 }
 ::selection{background:var(--giallo); color:#111}
@@ -58,13 +59,15 @@ body{
 /* articolo */
 main{max-width:720px; margin:0 auto; padding:56px 22px 40px}
 .titolo{
-  font-weight:800; letter-spacing:-.03em; line-height:1;
+  font-family:"Clash Display","General Sans",system-ui,sans-serif;
+  font-weight:600; letter-spacing:-.02em; line-height:1;
   font-size:clamp(38px,7vw,64px); margin:14px 0 18px;
 }
 .titolo-serif{font-family:"Instrument Serif",serif; font-style:italic; font-weight:400}
 main > p{font-size:17px; line-height:1.65; margin-bottom:16px}
 h2{
-  font-weight:800; font-size:clamp(20px,2.6vw,26px); letter-spacing:-.02em;
+  font-family:"Clash Display","General Sans",system-ui,sans-serif;
+  font-weight:600; font-size:clamp(20px,2.6vw,26px); letter-spacing:-.01em;
   border-bottom:1.5px solid var(--inchiostro); padding-bottom:10px; margin:46px 0 18px;
 }
 ul,ol{padding-left:22px; display:flex; flex-direction:column; gap:10px; margin-bottom:16px}
