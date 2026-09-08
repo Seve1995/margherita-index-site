@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#efece4">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#12151a">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Margherita Index — Quanto costa la pizza nella tua città?</title>
 <meta name="description" content="Il prezzo della pizza Margherita in ogni città italiana. 17.783 pizzerie, 1.736 città, dati reali verificati. Scopri se la tua città è cara o economica.">
 <meta property="og:title" content="Margherita Index — Quanto costa la pizza nella tua città?">
@@ -938,13 +942,21 @@ function testoCondivisione(){
   const d=INDICE[cittaCorrente];
   return `A ${cittaCorrente} la Margherita media costa €${d.avg?d.avg.toFixed(2).replace('.',','):'?'}\nScopri la tua città ↓`;
 }
+function urlCondivisione(){
+  if(cittaCorrente&&INDICE&&INDICE[cittaCorrente]){
+    const d=INDICE[cittaCorrente];
+    if(d.avg) // le share card statiche esistono solo per citta con media
+      return 'https://margherita-index.it/citta/'+(d.slug||slugCitta(cittaCorrente))+'.html';
+  }
+  return 'https://margherita-index.it/';
+}
 function condividiNativo(){
-  if(navigator.share){navigator.share({title:'Margherita Index',text:testoCondivisione(),url:location.href});}
+  if(navigator.share){navigator.share({title:'Margherita Index',text:testoCondivisione(),url:urlCondivisione()});}
   else copiaLink();
 }
-function copiaLink(){navigator.clipboard.writeText(location.href).then(()=>toast('Link copiato'));}
+function copiaLink(){navigator.clipboard.writeText(urlCondivisione()).then(()=>toast('Link copiato'));}
 function postaSuX(){
-  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(testoCondivisione()+'\n'+location.href),'_blank');
+  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(testoCondivisione()+'\n'+urlCondivisione()),'_blank');
 }
 function toast(msg){
   const t=$('toast'); t.textContent=msg; t.classList.add('visibile');
