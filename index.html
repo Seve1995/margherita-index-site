@@ -212,6 +212,9 @@ button{font-family:inherit}
 .scontrino .tot-valore{font-size:34px; font-weight:600; letter-spacing:-.02em}
 .scontrino .pos-linea{font-size:11.5px; color:#555; margin-bottom:14px}
 .scontrino .mini-stats{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:11px; color:#444; margin-bottom:14px}
+.trend-box{margin:0 0 14px; padding:10px 12px 8px; border-top:1px dashed rgba(23,24,28,.15); border-bottom:1px dashed rgba(23,24,28,.15)}
+.trend-box svg{display:block; width:100%; height:auto}
+.trend-cap{font-size:10px; color:#666; margin-top:4px; display:flex; justify-content:space-between; gap:8px}
 .mute-cta{
   font-size:9.5px; color:#888; text-decoration:underline; text-underline-offset:2px;
 }
@@ -652,6 +655,7 @@ function renderizzaScontrino(citta){
       <span>min: <b>${idx.min?'€'+idx.min.toFixed(2).replace('.',','):'—'}</b></span>
       <span>max: <b>${idx.max?'€'+idx.max.toFixed(2).replace('.',','):'—'}</b></span>
     </div>
+    <div class="trend-box" id="trendBox" hidden></div>
     ${corpo}
     <div style="text-align:right;font-size:9px;color:#999;margin-top:10px">valutazioni © Google</div>
     <div class="codice-barre" aria-hidden="true"></div>
@@ -662,6 +666,41 @@ function renderizzaScontrino(citta){
     </div>`;
   collegaSegnalazione(citta);
   costruisciMonetizzazione(citta);
+  if(INDICE[citta].tr)caricaTrend(citta,(INDICE[citta].slug||slugCitta(citta)));
+}
+
+const MESI_BREVI=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+function svgTrend(mesi){
+  const W=260,H=56,P=6;
+  const vals=mesi.map(x=>x.media);
+  const mn=Math.min(...vals), mx=Math.max(...vals), span=(mx-mn)||1;
+  const X=i=>P+i*(W-2*P)/(mesi.length-1);
+  const Y=v=>P+(1-(v-mn)/span)*(H-2*P);
+  const pts=mesi.map((x,i)=>X(i).toFixed(1)+','+Y(x.media).toFixed(1)).join(' ');
+  const dots=mesi.map((x,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(x.media).toFixed(1)}" r="2.4" fill="var(--rosso)"><title>${x.m} · €${String(x.media.toFixed(2)).replace('.',',')} (n=${x.n})</title></circle>`).join('');
+  const etichetta=m=>{const p=m.split('-');return (MESI_BREVI[+p[1]-1]||'')+" '"+p[0].slice(2);};
+  const fmt=v=>'€'+v.toFixed(2).replace('.',',');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento media mensile">`
+    +`<polyline points="${pts}" fill="none" stroke="var(--rosso)" stroke-width="2" stroke-linejoin="round"/>${dots}`
+    +`<text x="${P}" y="${H-1}" font-size="8" fill="#888">${etichetta(mesi[0].m)}</text>`
+    +`<text x="${W-P}" y="${H-1}" font-size="8" fill="#888" text-anchor="end">${etichetta(mesi[mesi.length-1].m)}</text>`
+    +`<text x="${W-P}" y="${P+3}" font-size="8" fill="#555" text-anchor="end">${fmt(mx)}</text>`
+    +`<text x="${W-P}" y="${Y(mn).toFixed(1)}" font-size="8" fill="#555" text-anchor="end">${fmt(mn)}</text>`
+    +`</svg>`;
+}
+function caricaTrend(citta,slug){
+  fetch('trend/'+slug+'.json?v='+Date.now())
+    .then(r=>{if(!r.ok)throw 0;return r.json();})
+    .then(t=>{
+      if(cittaCorrente!==citta||!t.mesi||t.mesi.length<2)return;
+      const box=$('trendBox');
+      if(!box)return;
+      const ult=t.mesi[t.mesi.length-1];
+      box.hidden=false;
+      box.innerHTML=svgTrend(t.mesi)
+        +`<div class="trend-cap"><span>andamento media mensile</span><span>ultimo: €${String(ult.media.toFixed(2)).replace('.',',')} · ${t.mesi.length} mesi</span></div>`;
+    })
+    .catch(()=>{});
 }
 
 function slugCitta(c){
