@@ -731,7 +731,7 @@ function trendCard(mesi){
     +`<text x="${W-2}" y="${(PT+7).toFixed(0)}" font-size="9" fill="#666" text-anchor="end">${fmtEuro(vals.reduce((a,b)=>Math.max(a,b)))}</text>`
     +`<text x="${W-2}" y="${(H-PB).toFixed(0)}" font-size="9" fill="#666" text-anchor="end">${fmtEuro(vals.reduce((a,b)=>Math.min(a,b)))}</text>`
     +`</svg>`
-    +`<div class="trend-cap"><span>media mensile dei prezzi verificati</span><span>ultimo: ${fmtEuro(d1)} · ${mesi[mesi.length-1].n} pizzerie</span></div>`;
+    +`<div class="trend-cap"><span>media mensile a parità di locali</span><span>ultimo: ${fmtEuro(d1)} · ${mesi[mesi.length-1].n} pizzerie</span></div>`;
 }
 function caricaTrend(citta,slug){
   fetch('trend/'+slug+'.json?v='+Date.now())
